@@ -275,6 +275,7 @@
     <Content Include="Views\Home\Products.cshtml" />
     <Content Include="Views\NhanVien\Index.cshtml" />
     <Content Include="Views\Home\Menu_Product.cshtml" />
+    <Content Include="Views\Home\ProductDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

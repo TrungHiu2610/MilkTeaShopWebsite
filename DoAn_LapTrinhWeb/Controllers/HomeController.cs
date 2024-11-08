@@ -108,5 +108,14 @@ namespace DoAn_LapTrinhWeb.Controllers
                 danhSachSP = data.SanPhams.Where(t => t.MaLoaiSP == id).ToList();
             return View(danhSachSP);
         }
+        public ActionResult ProductDetails(string id)
+        {
+            SanPham sanPham = new SanPham();
+            if (id == null)
+                return RedirectToAction("NotFound", "Error");
+            else
+                sanPham = data.SanPhams.FirstOrDefault(t=>t.MaSanPham == id);
+            return View(sanPham);
+        }
     }
 }
