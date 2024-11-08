@@ -140,9 +140,27 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DB_QL_CuaHangTraSua.dbml</DependentUpon>
     </Compile>
+    <Compile Include="Models\GioHangModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\bootstrap\css\bootstrap-grid.css" />
+    <Content Include="Content\bootstrap\css\bootstrap-grid.min.css" />
+    <Content Include="Content\bootstrap\css\bootstrap-reboot.css" />
+    <Content Include="Content\bootstrap\css\bootstrap-reboot.min.css" />
+    <Content Include="Content\bootstrap\css\bootstrap.css" />
+    <Content Include="Content\bootstrap\css\bootstrap.min.css" />
+    <Content Include="Content\bootstrap\js\bootstrap.bundle.js" />
+    <Content Include="Content\bootstrap\js\bootstrap.bundle.min.js" />
+    <Content Include="Content\bootstrap\js\bootstrap.js" />
+    <Content Include="Content\bootstrap\js\bootstrap.min.js" />
+    <Content Include="Content\bootstrap\js\jquery-3.3.1.min.js" />
+    <Content Include="Content\Image\AddToWishList.svg" />
+    <Content Include="Content\Image\cancel_product.svg" />
+    <Content Include="Content\Image\minus.svg" />
+    <Content Include="Content\Image\plus.svg" />
+    <Content Include="Content\Image\QuickView.svg" />
+    <Content Include="Content\ProductItem.css" />
     <Content Include="Content\404.css" />
     <Content Include="Content\HinhAnh\Chanh-Aiyu-trân-châu-trắng-2.png" />
     <Content Include="Content\HinhAnh\kem-tc.png" />
@@ -160,6 +178,7 @@
     <Content Include="Content\HinhAnh\tra-sua-xoai.png" />
     <Content Include="Content\HinhAnh\Yakult-Dao-Da-Xay.png" />
     <Content Include="Content\Image\Add To Cart.svg" />
+    <Content Include="Content\Image\AddToCart_Hover.svg" />
     <Content Include="Content\Image\Background.png" />
     <Content Include="Content\Image\Featured.svg" />
     <Content Include="Content\Image\home.svg" />
@@ -227,6 +246,7 @@
     <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
+    <Content Include="Content\ViewCart.css" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\Font\FZ Poppins-Medium.ttf" />
@@ -236,6 +256,16 @@
       <LastGenOutput>DB_QL_CuaHangTraSua.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Content\bootstrap\css\bootstrap-grid.css.map" />
+    <Content Include="Content\bootstrap\css\bootstrap-grid.min.css.map" />
+    <Content Include="Content\bootstrap\css\bootstrap-reboot.css.map" />
+    <Content Include="Content\bootstrap\css\bootstrap-reboot.min.css.map" />
+    <Content Include="Content\bootstrap\css\bootstrap.css.map" />
+    <Content Include="Content\bootstrap\css\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap\js\bootstrap.bundle.js.map" />
+    <Content Include="Content\bootstrap\js\bootstrap.bundle.min.js.map" />
+    <Content Include="Content\bootstrap\js\bootstrap.js.map" />
+    <Content Include="Content\bootstrap\js\bootstrap.min.js.map" />
     <None Include="Models\DB_QL_CuaHangTraSua.dbml.layout">
       <DependentUpon>DB_QL_CuaHangTraSua.dbml</DependentUpon>
     </None>
@@ -276,6 +306,7 @@
     <Content Include="Views\NhanVien\Index.cshtml" />
     <Content Include="Views\Home\Menu_Product.cshtml" />
     <Content Include="Views\Home\ProductDetails.cshtml" />
+    <Content Include="Views\Home\ViewCart.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

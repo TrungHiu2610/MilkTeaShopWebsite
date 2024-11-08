@@ -1,0 +1,103 @@
+﻿@font-face {
+    font-family: 'fz poppins-medium';
+    src: url('font/fz poppins-medium.ttf') format('truetype');
+}
+
+* {
+    font-family: 'FZ Poppins', sans-serif;
+}
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+.header {
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.shopping-cart {
+    margin-bottom: 20px;
+}
+
+.table {
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+}
+
+    .table th, .table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+.quantity {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .quantity img {
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+    }
+
+.input-box {
+    width: 50px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 0 5px;
+}
+
+.discount-code {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+#discountCode {
+    width: 70%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.apply-code {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.total-payment {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 4px;
+}
+
+.total-products, .shipping-fee, .total-amount {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.checkout {
+    width:80%;
+    height:20px;
+    display: block;
+    text-align: center;
+    text-decoration:none;
+    padding: 10px;
+    background-color: #C58A66;
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    cursor: pointer;
+}

@@ -7,7 +7,7 @@ using DoAn_LapTrinhWeb.Models;
 
 namespace DoAn_LapTrinhWeb.Controllers
 {
-    
+
     public class HomeController : Controller
     {
 
@@ -73,13 +73,13 @@ namespace DoAn_LapTrinhWeb.Controllers
         {
             NguoiDung user = data.NguoiDungs.FirstOrDefault
                 (t => t.SoDienThoai == form["PhoneNumber"] && t.MatKhau == form["Password"]);
-            if(user!= null)
+            if (user != null)
             {
                 Session["acc"] = user;
                 string vaitro = user.PhanQuyen.VaiTro;
-                if(vaitro == "Khách hàng")
+                if (vaitro == "Khách hàng")
                 {
-                    
+
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -92,7 +92,7 @@ namespace DoAn_LapTrinhWeb.Controllers
         public ActionResult LogOut()
         {
             Session["acc"] = null;
-            return RedirectToAction("Index","Home");
+            return RedirectToAction("Index", "Home");
         }
         public ActionResult Menu_Product()
         {
@@ -114,8 +114,76 @@ namespace DoAn_LapTrinhWeb.Controllers
             if (id == null)
                 return RedirectToAction("NotFound", "Error");
             else
-                sanPham = data.SanPhams.FirstOrDefault(t=>t.MaSanPham == id);
+                sanPham = data.SanPhams.FirstOrDefault(t => t.MaSanPham == id);
             return View(sanPham);
         }
+        public ActionResult AddToCart(string MaSP, int SoLuong)
+        {
+            int currentUserId;
+            GioHang cart = Session["gh"] as GioHang;
+            NguoiDung user = Session["acc"] as NguoiDung;
+            if (cart == null)
+            {
+                Session["gh"] = new GioHang();
+            }
+            if (user != null)
+            {
+                currentUserId = user.MaNguoiDung;
+                cart = data.GioHangs.FirstOrDefault(t => t.MaNguoiDung == currentUserId);
+            }
+            else // nếu chưa đăng nhập thì gán id user bằng 1
+            {
+                currentUserId = 1;
+                cart = data.GioHangs.FirstOrDefault(t => t.MaNguoiDung == currentUserId);
+            }
+
+            if (cart == null)
+            {
+                string sMaGH = "GH0001";
+                if (data.GioHangs.ToList().Count > 0)
+                {
+                    GioHang gh = data.GioHangs.OrderByDescending(t => t.MaGioHang).Take(1) as GioHang;
+                    int iMaGH = int.Parse(gh.MaGioHang.Substring(2, gh.MaGioHang.Length));
+                    sMaGH = "GH" + iMaGH.ToString("D3");
+                }
+                cart = new GioHang { MaGioHang = sMaGH, MaNguoiDung = currentUserId, NgayTao = DateTime.Now, TongTien = 0, TrangThai = "Đang xử lý" };
+                data.GioHangs.InsertOnSubmit(cart);
+                data.SubmitChanges();
+            }
+
+            ChiTietGioHang cartItem = data.ChiTietGioHangs.FirstOrDefault(t => t.MaGioHang == cart.MaGioHang && t.MaSanPham == MaSP.ToString());
+            if (cartItem == null) // nếu sp chưa có trong giỏ hàng thì thêm sp
+            {   //Gán size và topping mặc định trước gòi mốt thiết kế vụ chọn size, chọn topping sau heh
+                decimal donGia = data.SanPhams.FirstOrDefault(t => t.MaSanPham == MaSP).Gia;
+                decimal? giaSize = data.QuanLySP_Sizes.FirstOrDefault(t => t.MaSanPham == MaSP && t.MaSize == "SZ01").GiaThem;
+                decimal giaTopping = data.Toppings.FirstOrDefault(t => t.MaTopping == 1).Gia;
+                cartItem = new ChiTietGioHang { MaGioHang = cart.MaGioHang, MaSanPham = MaSP.ToString(), SoLuong = SoLuong, MaSize = "SZ01", MaTopping = 1, ThanhTien = donGia + giaSize + giaTopping };
+                data.ChiTietGioHangs.InsertOnSubmit(cartItem);
+                data.SubmitChanges();
+            }
+            else // có ròi thì tăng hoặc giảm sl
+            {
+                decimal donGia = data.SanPhams.FirstOrDefault(t => t.MaSanPham == cartItem.MaSanPham).Gia;
+                decimal? giaSize = data.QuanLySP_Sizes.FirstOrDefault(t => t.MaSanPham == cartItem.MaSanPham && t.MaSize == "SZ01").GiaThem;
+                decimal giaTopping = data.Toppings.FirstOrDefault(t => t.MaTopping == 1).Gia;
+                cartItem.SoLuong += SoLuong;
+                cartItem.ThanhTien += (donGia + giaSize + giaTopping) * SoLuong;
+            }
+            Session["gh"] = cart;
+            data.SubmitChanges();
+            return RedirectToAction("Products");
+        }
+
+        public ActionResult ViewCart()
+        {
+            GioHang cart = Session["gh"] as GioHang;
+            if (cart == null)
+            {
+                return RedirectToAction("Products");
+            }
+            List<ChiTietGioHang> cartItems = data.ChiTietGioHangs.Where(t => t.MaGioHang == cart.MaGioHang).ToList();
+            return View(cartItems);
+        }
+
     }
 }

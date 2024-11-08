@@ -71,11 +71,10 @@ namespace DoAn_LapTrinhWeb.Models
     partial void DeleteTopping(Topping instance);
         #endregion
         public DB_QL_CuaHangTraSuaDataContext() :
-                base(global::System.Configuration.ConfigurationManager.ConnectionStrings["db_qlcuahang_ltwConnectionString3"].ConnectionString, mappingSource)
+                base(global::System.Configuration.ConfigurationManager.ConnectionStrings["db_qlcuahang_ltwConnectionString"].ConnectionString, mappingSource)
         {
             OnCreated();
         }
-
         public DB_QL_CuaHangTraSuaDataContext(string connection) : 
 				base(connection, mappingSource)
 		{
@@ -221,6 +220,8 @@ namespace DoAn_LapTrinhWeb.Models
 		
 		private System.Nullable<int> _MaTopping;
 		
+		private System.Nullable<decimal> _ThanhTien;
+		
 		private EntityRef<GioHang> _GioHang;
 		
 		private EntityRef<SanPham> _SanPham;
@@ -243,6 +244,8 @@ namespace DoAn_LapTrinhWeb.Models
     partial void OnMaSizeChanged();
     partial void OnMaToppingChanging(System.Nullable<int> value);
     partial void OnMaToppingChanged();
+    partial void OnThanhTienChanging(System.Nullable<decimal> value);
+    partial void OnThanhTienChanged();
     #endregion
 		
 		public ChiTietGioHang()
@@ -366,6 +369,26 @@ namespace DoAn_LapTrinhWeb.Models
 					this._MaTopping = value;
 					this.SendPropertyChanged("MaTopping");
 					this.OnMaToppingChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ThanhTien", DbType="Decimal(10,2)")]
+		public System.Nullable<decimal> ThanhTien
+		{
+			get
+			{
+				return this._ThanhTien;
+			}
+			set
+			{
+				if ((this._ThanhTien != value))
+				{
+					this.OnThanhTienChanging(value);
+					this.SendPropertyChanging();
+					this._ThanhTien = value;
+					this.SendPropertyChanged("ThanhTien");
+					this.OnThanhTienChanged();
 				}
 			}
 		}
@@ -1256,6 +1279,8 @@ namespace DoAn_LapTrinhWeb.Models
 		
 		private System.Nullable<System.DateTime> _NgayTao;
 		
+		private System.Nullable<decimal> _TongTien;
+		
 		private string _TrangThai;
 		
 		private EntitySet<ChiTietGioHang> _ChiTietGioHangs;
@@ -1272,6 +1297,8 @@ namespace DoAn_LapTrinhWeb.Models
     partial void OnMaNguoiDungChanged();
     partial void OnNgayTaoChanging(System.Nullable<System.DateTime> value);
     partial void OnNgayTaoChanged();
+    partial void OnTongTienChanging(System.Nullable<decimal> value);
+    partial void OnTongTienChanged();
     partial void OnTrangThaiChanging(string value);
     partial void OnTrangThaiChanged();
     #endregion
@@ -1343,6 +1370,26 @@ namespace DoAn_LapTrinhWeb.Models
 					this._NgayTao = value;
 					this.SendPropertyChanged("NgayTao");
 					this.OnNgayTaoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TongTien", DbType="Decimal(10,2)")]
+		public System.Nullable<decimal> TongTien
+		{
+			get
+			{
+				return this._TongTien;
+			}
+			set
+			{
+				if ((this._TongTien != value))
+				{
+					this.OnTongTienChanging(value);
+					this.SendPropertyChanging();
+					this._TongTien = value;
+					this.SendPropertyChanged("TongTien");
+					this.OnTongTienChanged();
 				}
 			}
 		}

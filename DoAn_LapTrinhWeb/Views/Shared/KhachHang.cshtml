@@ -1,4 +1,16 @@
 ﻿@using DoAn_LapTrinhWeb.Models;
+@{
+    GioHangModel cart;
+    if(Session["gh"] != null)
+    {
+        GioHang _cart = Session["gh"] as GioHang;
+        cart = new GioHangModel(_cart);
+    }
+    else
+    {
+        cart = null;
+    }
+}
 
 <!DOCTYPE html>
 
@@ -54,14 +66,30 @@
         <div class="cart">
             <div style="display: flex; align-items: center">
                 <div style="height: 34px; width: 34px; align-self: flex-end; position: relative;">
-                    <img src="~/Content/Image/Rectangle.svg" />
+                    <a href="/Home/ViewCart"><img src="~/Content/Image/Rectangle.svg" /></a>
                     <div class="number">
-                        <span style="color: white; font-size: 10px;">3</span> <!-- Đây là số hàng trong giỏ hàng -->
+                        <!-- Đây là số hàng trong giỏ hàng -->
+                        @if (cart != null)
+                        {
+                            <span style="color: white; font-size: 10px;">@cart.getSoLuongMatHang()</span>
+                        }
+                        else
+                        {
+                            <span style="color: white; font-size: 10px;">0</span>
+                        }
                     </div>
                 </div>
                 <div style=" margin-left: 12px;height:34px">
                     <p style="font-size: 12px"> Giỏ hàng</p>
-                    <p style="font-size: 16px;font-weight:500"> 90.000 VND</p> <!-- Đây là tổng số tiền trong giỏ hàng -->
+                    <!-- Đây là tổng số tiền trong giỏ hàng -->
+                    @if (cart != null)
+                    {
+                        <p style="font-size: 16px;font-weight:500"> @decimal.Parse(cart.getTongTien().ToString()).ToString("N0") VND</p>
+                    }
+                    else
+                    {
+                        <p style="font-size: 16px;font-weight:500"> 0 VND</p>
+                    }
                 </div>
             </div>
         </div>
