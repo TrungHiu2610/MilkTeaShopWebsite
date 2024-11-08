@@ -1,0 +1,13 @@
+﻿@using DoAn_LapTrinhWeb.Models;
+@model List<LoaiSanPham>
+
+<ul class="nav flex-column">
+    @foreach (LoaiSanPham item in Model)
+    {
+        <li>
+            <a class="nav-link" href="/Home/Products/@item.MaLoaiSP">
+                @item.TenLoaiSP
+            </a>
+        </li>
+    }
+</ul>

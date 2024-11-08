@@ -1,0 +1,30 @@
+﻿@{
+    ViewBag.Title = "NotFound";
+    Layout = "~/Views/Shared/KhachHang.cshtml";
+}
+<div class="breadcrumbs">
+    <div class="locations" style="margin-left: 15%;">
+        <img src="~/Content/Image/home.svg" />
+    </div>
+    <div class="locations">
+        <img src="~/Content/Image/Next.svg" />
+    </div>
+    <div class="locations">
+        <span style="color: #C58A66">Lỗi 404</span>
+    </div>
+</div>
+<div class="er404_illus">
+    <img src="~/Content/Image/Illustration.svg" />
+    <span style="font-size: 40px; font-weight:500; padding:32px 0 10px">
+        Lỗi! Không Tìm Thấy Trang
+    </span>
+    <span style="padding: 10px; font-size: 16px; color: #808080; text-align:center; line-height: 150%">
+        Trang bạn tìm có vẻ đã bị xóa hoặc thất lạc. <br />
+        Vui lòng kiểm tra lại đường dẫn và quay lại sau nhé!
+    </span>
+    <a href="/Home/Index">
+        <button class="btn">
+            Trở về Trang Chủ
+        </button>
+    </a>
+</div>

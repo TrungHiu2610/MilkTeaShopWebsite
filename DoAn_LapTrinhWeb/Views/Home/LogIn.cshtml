@@ -1,0 +1,42 @@
+﻿@{
+    ViewBag.Title = "LogIn";
+    Layout = "~/Views/Shared/KhachHang.cshtml";
+}
+<div class="breadcrumbs">
+    <div class="locations" style="margin-left: 15%;">
+        <a href="@Url.Action("Index", "Home")"><img src="~/Content/Image/home.svg" /></a>
+    </div>
+    <div class="locations">
+        <img src="~/Content/Image/Next.svg" />
+    </div>
+    <div class="locations">
+        <span style="color: #C58A66">Đăng nhập</span>
+    </div>
+</div>
+@using (Html.BeginForm("LogIn", "Home", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-container">
+        <div style="text-align:center; padding-bottom: 24px;">
+            <span>Đăng Nhập</span>
+        </div>
+        <div class="form-group">
+            <input type="text" name="PhoneNumber" placeholder="Số Điện Thoại" class="form-control" />
+        </div>
+        <div class="form-group">
+            <input type="password" name="Password" placeholder="Mật khẩu" class="form-control" />
+        </div>
+        <div class="form-group" style="justify-content:flex-start; margin-bottom: 0">
+            <label style="font-size:14px">
+                <input type="checkbox" name="RememberAccount" />
+                Ghi nhớ tài khoản
+            </label>
+        </div>
+        <button type="submit" class="btn-primary">Đăng nhập</button>
+        <div class="form-group" style="margin-top:20px;margin-bottom:0px">
+            <label style="font-size:14px">
+                Chưa có tài khoản? <a href="@Url.Action("Register", "Home")">Đăng ký</a>
+            </label>
+        </div>
+    </div>
+}
