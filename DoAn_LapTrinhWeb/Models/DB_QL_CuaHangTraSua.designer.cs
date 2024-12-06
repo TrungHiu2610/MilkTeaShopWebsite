@@ -71,7 +71,7 @@ namespace DoAn_LapTrinhWeb.Models
     partial void DeleteTopping(Topping instance);
         #endregion
         public DB_QL_CuaHangTraSuaDataContext() :
-                base(global::System.Configuration.ConfigurationManager.ConnectionStrings["db_qlcuahang_ltwConnectionString"].ConnectionString, mappingSource)
+               base(global::System.Configuration.ConfigurationManager.ConnectionStrings["db_qlcuahang_ltwConnectionString"].ConnectionString, mappingSource)
         {
             OnCreated();
         }
@@ -786,11 +786,7 @@ namespace DoAn_LapTrinhWeb.Models
 		
 		private decimal _Gia;
 		
-		private string _MaGG;
-		
 		private EntitySet<ToppingDonHang> _ToppingDonHangs;
-		
-		private EntityRef<GiamGia> _GiamGia;
 		
 		private EntityRef<HoaDonBanHang> _HoaDonBanHang;
 		
@@ -808,14 +804,11 @@ namespace DoAn_LapTrinhWeb.Models
     partial void OnSoLuongChanged();
     partial void OnGiaChanging(decimal value);
     partial void OnGiaChanged();
-    partial void OnMaGGChanging(string value);
-    partial void OnMaGGChanged();
     #endregion
 		
 		public ChiTietHoaDonBanHang()
 		{
 			this._ToppingDonHangs = new EntitySet<ToppingDonHang>(new Action<ToppingDonHang>(this.attach_ToppingDonHangs), new Action<ToppingDonHang>(this.detach_ToppingDonHangs));
-			this._GiamGia = default(EntityRef<GiamGia>);
 			this._HoaDonBanHang = default(EntityRef<HoaDonBanHang>);
 			this._SanPham = default(EntityRef<SanPham>);
 			OnCreated();
@@ -909,30 +902,6 @@ namespace DoAn_LapTrinhWeb.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MaGG", DbType="Char(10)")]
-		public string MaGG
-		{
-			get
-			{
-				return this._MaGG;
-			}
-			set
-			{
-				if ((this._MaGG != value))
-				{
-					if (this._GiamGia.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnMaGGChanging(value);
-					this.SendPropertyChanging();
-					this._MaGG = value;
-					this.SendPropertyChanged("MaGG");
-					this.OnMaGGChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ChiTietHoaDonBanHang_ToppingDonHang", Storage="_ToppingDonHangs", ThisKey="MaSanPham,MaHoaDon", OtherKey="MaSanPham,MaHoaDon")]
 		public EntitySet<ToppingDonHang> ToppingDonHangs
 		{
@@ -943,40 +912,6 @@ namespace DoAn_LapTrinhWeb.Models
 			set
 			{
 				this._ToppingDonHangs.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="GiamGia_ChiTietHoaDonBanHang", Storage="_GiamGia", ThisKey="MaGG", OtherKey="MaGG", IsForeignKey=true, DeleteRule="SET NULL")]
-		public GiamGia GiamGia
-		{
-			get
-			{
-				return this._GiamGia.Entity;
-			}
-			set
-			{
-				GiamGia previousValue = this._GiamGia.Entity;
-				if (((previousValue != value) 
-							|| (this._GiamGia.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._GiamGia.Entity = null;
-						previousValue.ChiTietHoaDonBanHangs.Remove(this);
-					}
-					this._GiamGia.Entity = value;
-					if ((value != null))
-					{
-						value.ChiTietHoaDonBanHangs.Add(this);
-						this._MaGG = value.MaGG;
-					}
-					else
-					{
-						this._MaGG = default(string);
-					}
-					this.SendPropertyChanged("GiamGia");
-				}
 			}
 		}
 		
@@ -1097,7 +1032,7 @@ namespace DoAn_LapTrinhWeb.Models
 		
 		private decimal _PhanTramGiam;
 		
-		private EntitySet<ChiTietHoaDonBanHang> _ChiTietHoaDonBanHangs;
+		private EntitySet<HoaDonBanHang> _HoaDonBanHangs;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -1117,7 +1052,7 @@ namespace DoAn_LapTrinhWeb.Models
 		
 		public GiamGia()
 		{
-			this._ChiTietHoaDonBanHangs = new EntitySet<ChiTietHoaDonBanHang>(new Action<ChiTietHoaDonBanHang>(this.attach_ChiTietHoaDonBanHangs), new Action<ChiTietHoaDonBanHang>(this.detach_ChiTietHoaDonBanHangs));
+			this._HoaDonBanHangs = new EntitySet<HoaDonBanHang>(new Action<HoaDonBanHang>(this.attach_HoaDonBanHangs), new Action<HoaDonBanHang>(this.detach_HoaDonBanHangs));
 			OnCreated();
 		}
 		
@@ -1221,16 +1156,16 @@ namespace DoAn_LapTrinhWeb.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="GiamGia_ChiTietHoaDonBanHang", Storage="_ChiTietHoaDonBanHangs", ThisKey="MaGG", OtherKey="MaGG")]
-		public EntitySet<ChiTietHoaDonBanHang> ChiTietHoaDonBanHangs
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="GiamGia_HoaDonBanHang", Storage="_HoaDonBanHangs", ThisKey="MaGG", OtherKey="MaGG")]
+		public EntitySet<HoaDonBanHang> HoaDonBanHangs
 		{
 			get
 			{
-				return this._ChiTietHoaDonBanHangs;
+				return this._HoaDonBanHangs;
 			}
 			set
 			{
-				this._ChiTietHoaDonBanHangs.Assign(value);
+				this._HoaDonBanHangs.Assign(value);
 			}
 		}
 		
@@ -1254,13 +1189,13 @@ namespace DoAn_LapTrinhWeb.Models
 			}
 		}
 		
-		private void attach_ChiTietHoaDonBanHangs(ChiTietHoaDonBanHang entity)
+		private void attach_HoaDonBanHangs(HoaDonBanHang entity)
 		{
 			this.SendPropertyChanging();
 			entity.GiamGia = this;
 		}
 		
-		private void detach_ChiTietHoaDonBanHangs(ChiTietHoaDonBanHang entity)
+		private void detach_HoaDonBanHangs(HoaDonBanHang entity)
 		{
 			this.SendPropertyChanging();
 			entity.GiamGia = null;
@@ -1508,11 +1443,15 @@ namespace DoAn_LapTrinhWeb.Models
 		
 		private decimal _TongTien;
 		
+		private string _MaGG;
+		
 		private string _TrangThai;
 		
 		private string _PhuongThucThanhToan;
 		
 		private EntitySet<ChiTietHoaDonBanHang> _ChiTietHoaDonBanHangs;
+		
+		private EntityRef<GiamGia> _GiamGia;
 		
 		private EntityRef<NguoiDung> _NguoiDung;
 		
@@ -1528,6 +1467,8 @@ namespace DoAn_LapTrinhWeb.Models
     partial void OnNgayLapChanged();
     partial void OnTongTienChanging(decimal value);
     partial void OnTongTienChanged();
+    partial void OnMaGGChanging(string value);
+    partial void OnMaGGChanged();
     partial void OnTrangThaiChanging(string value);
     partial void OnTrangThaiChanged();
     partial void OnPhuongThucThanhToanChanging(string value);
@@ -1537,6 +1478,7 @@ namespace DoAn_LapTrinhWeb.Models
 		public HoaDonBanHang()
 		{
 			this._ChiTietHoaDonBanHangs = new EntitySet<ChiTietHoaDonBanHang>(new Action<ChiTietHoaDonBanHang>(this.attach_ChiTietHoaDonBanHangs), new Action<ChiTietHoaDonBanHang>(this.detach_ChiTietHoaDonBanHangs));
+			this._GiamGia = default(EntityRef<GiamGia>);
 			this._NguoiDung = default(EntityRef<NguoiDung>);
 			OnCreated();
 		}
@@ -1625,6 +1567,30 @@ namespace DoAn_LapTrinhWeb.Models
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MaGG", DbType="Char(10)")]
+		public string MaGG
+		{
+			get
+			{
+				return this._MaGG;
+			}
+			set
+			{
+				if ((this._MaGG != value))
+				{
+					if (this._GiamGia.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnMaGGChanging(value);
+					this.SendPropertyChanging();
+					this._MaGG = value;
+					this.SendPropertyChanged("MaGG");
+					this.OnMaGGChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TrangThai", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
 		public string TrangThai
 		{
@@ -1675,6 +1641,40 @@ namespace DoAn_LapTrinhWeb.Models
 			set
 			{
 				this._ChiTietHoaDonBanHangs.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="GiamGia_HoaDonBanHang", Storage="_GiamGia", ThisKey="MaGG", OtherKey="MaGG", IsForeignKey=true, DeleteRule="SET NULL")]
+		public GiamGia GiamGia
+		{
+			get
+			{
+				return this._GiamGia.Entity;
+			}
+			set
+			{
+				GiamGia previousValue = this._GiamGia.Entity;
+				if (((previousValue != value) 
+							|| (this._GiamGia.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._GiamGia.Entity = null;
+						previousValue.HoaDonBanHangs.Remove(this);
+					}
+					this._GiamGia.Entity = value;
+					if ((value != null))
+					{
+						value.HoaDonBanHangs.Add(this);
+						this._MaGG = value.MaGG;
+					}
+					else
+					{
+						this._MaGG = default(string);
+					}
+					this.SendPropertyChanged("GiamGia");
+				}
 			}
 		}
 		

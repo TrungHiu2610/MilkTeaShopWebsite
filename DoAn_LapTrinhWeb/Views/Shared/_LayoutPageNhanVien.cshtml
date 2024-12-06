@@ -1,0 +1,58 @@
+﻿@using DoAn_LapTrinhWeb.Models;
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link href="~/Content/Main.css" rel="stylesheet" />
+    <link href="~/Content/404.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <link href="~/Content/ProductItem.css" rel="stylesheet" />
+    <link href="~/Content/Pagination.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="~/Content/bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <script src="~/Content/bootstrap/js/jquery-3.3.1.min.js"></script>
+    <script src="~/Content/bootstrap/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <div class="info-bar">
+        @if (Session["acc"] == null)
+        {
+            @* ---------Chưa Đăng Nhập--------- *@
+            <div class="login-register right-menu">
+                <a href="@Url.Action("LogIn", "Home")">Đăng nhập </a> / <a href="@Url.Action("Register", "Home")">Đăng ký</a>
+            </div>
+        }
+        else
+        {
+            NguoiDung user = Session["acc"] as NguoiDung;
+            @* ---------Đã Đăng Nhập--------- *@
+            <div class="login-register right-menu" style="position:relative">
+                <a href="#" class="user-link" style="display: flex; align-items: center">
+                    @user.HoTen
+                    <div class="user-image"></div>
+                </a>
+                <!-- Dropdown menu -->
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="/account/details">Thông tin tài khoản</a>
+                    <a href="/Home/LogOut">Đăng xuất</a>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="navbar">
+        <div class="left-menu">
+            <a href="@Url.Action("Index", "NhanVien")">Tổng Quan</a>
+            <a href="@Url.Action("Products", "NhanVien")">Sản phẩm</a>
+            <a href="@Url.Action("Orders", "NhanVien")">Đơn Hàng</a>
+            <a href="@Url.Action("Seup", "NhanVien")">Cài Đặt</a>
+        </div>
+    </div>
+    <div>
+        @RenderBody()
+    </div>
+</body>
+</html>

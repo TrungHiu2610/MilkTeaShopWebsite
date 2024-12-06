@@ -7,94 +7,110 @@
 
     GioHangModel cart = (Session["gh"] == null) ? null : new GioHangModel((GioHang)Session["gh"]);
 }
-
-<div class="container">
-    <div class="row">
-        <h1 class="header">Giỏ Hàng</h1>
+<div class="breadcrumbs">
+    <div class="locations" style="margin-left: 15%;">
+        <a href="@Url.Action("Index", "Home")"><img src="~/Content/Image/home.svg" /></a>
     </div>
-    <div class="row justify-content-center">
-        <div class="col-8">
-            <div class="shopping-cart">
-                <table class="table table-bordered">
-                    <thead>
+    <div class="locations">
+        <img src="~/Content/Image/Next.svg" />
+    </div>
+    <div class="locations">
+        <span style="color: #C58A66">Giỏ hàng</span>
+    </div>
+</div>
+<div class="header">
+    Giỏ Hàng
+</div>
+<div class="container">
+    <div class="col-8">
+        <div class="shopping-cart">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>SẢN PHẨM</th>
+                        <th>GIÁ</th>
+                        <th>SỐ LƯỢNG</th>
+                        <th colspan="2">TỔNG</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
                         <tr>
-                            <td>SẢN PHẨM</td>
-                            <td>GIÁ</td>
-                            <td>SỐ LƯỢNG</td>
-                            <td>TỔNG</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td>
-                                    <img src="~/Content/HinhAnh/@item.SanPham.HinhAnh" style="width:50px;height:50px" /> @item.SanPham.TenSanPham
-                                </td>
-                                <td>
-                                    @item.SanPham.Gia.ToString("N0")
-                                </td>
-                                <td>
-                                    <div class="quantity">
-                                        <a href="#"><img src="~/Content/Image/minus.svg" /></a>
-                                        <input type="number" class="input-box" value="@item.SoLuong">
-                                        <a href="#"><img src="~/Content/Image/plus.svg" /></a>
-                                    </div>
-                                </td>
-                                <td>
-                                    @decimal.Parse(item.ThanhTien.ToString()).ToString("N0") <span><img src="~/Content/Image/cancel_product.svg" /></span>
-                                </td>
-                            </tr>
-                        }
-                        <tr>
-                            <td colspan="4">
-                                <a href="#" class="btn btn-primary" style="color: #4D4D4D;background-color:gray;text-decoration:none">Mua Thêm</a>
+                            <td>
+                                <div class="product-info">
+                                    <img src="~/Content/HinhAnh/@item.SanPham.HinhAnh" />
+                                    <span>
+                                        @item.SanPham.TenSanPham <br /> 
+                                        <span style="color: #808080">Size @item.Size.TenSize, @item.Topping.TenTopping </span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td style="text-align:left">
+                                @string.Format("{0:N0}", item.SanPham.Gia)
+                            </td>
+                            <td>
+                                <div class="quantity">
+                                    <a href="#" id="minus"><img src="~/Content/Image/minus.svg" /></a>
+                                    <input type="number" class="input-box" value="@item.SoLuong" id="quantity" />
+                                    <a href="#" id="plus"><img src="~/Content/Image/plus.svg" /></a>
+                                </div>
+                            </td>
+                            <td>
+                                @string.Format("{0:N0}", item.ThanhTien)
+                            </td>
+                            <td>
+                                <img src="~/Content/Image/cancel_product.svg" />
                             </td>
                         </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="discount-code">
+                    }
+                    <tr>
+                        <td colspan="5" style="border: 1px solid #ddd; padding: 16px; text-align: left;">
+                            <a href="@Url.Action("Products", "Home")"><img src="~/Content/Image/Button_MuaThem.svg" /></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="discount-code">
+            <span>Mã Giảm Giá</span>
+            <div class="input-container">
                 <input type="text" id="discountCode" placeholder="Nhập mã giảm giá">
-                <button class="btn btn-primary" style="color: white; background-color:#333333; width:25%">Áp Mã</button>
+                <button class="apply-code">Áp Mã</button>
             </div>
         </div>
-        <div class="col-4">
-            <div class="total-payment">
-                <strong>Tổng Thanh Toán</strong>
-                <div class="total-products">
-                    Tổng sản phẩm:
-                    <span>
-                        @if (cart != null)
-                        {
-                            <span>@cart.getTongSoLuong()</span>
-                        }
-                        else
-                        {
-                            <span>0</span>
-                        }
-                    </span>
-                </div>
-                <hr style="border: 1px solid gray" />
-                <div class="shipping-fee">Phí vận chuyển: <span>0 VND</span></div>
-                <hr style="border: 1px solid gray" />
-                <div class="total-amount">
-                    Tổng cộng:
-                    <span>
-                        @if (cart != null)
-                        {
-                            <span>@decimal.Parse(cart.getTongTien().ToString()).ToString("N0") VND</span>
-                        }
-                        else
-                        {
-                            <span>0</span>
-                        }
-                    </span>
-                </div>
-                    <a href="#" class="checkout">Thanh Toán</a>
+    </div>
+    <div class="col-4">
+        <div class="total-payment">
+            <strong>Tổng Thanh Toán</strong>
+            <div class="total-products">
+                Tổng sản phẩm:
+                <span>
+                    @if (cart != null)
+                    {
+                        <span>@cart.getTongSoLuong()</span>
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                </span>
             </div>
+            <div class="shipping-fee">Phí vận chuyển: <span> - VND</span></div>
+            <div class="total-amount">
+                Tổng cộng:
+                <span>
+                    @if (cart != null)
+                    {
+                        <span>@string.Format("{0:N0} VND", cart.getTongTien())</span>
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                </span>
+            </div>
+            <a href="@Url.Action("CheckOut","Home")" class="checkout">Thanh Toán</a>
         </div>
-
     </div>
 </div>

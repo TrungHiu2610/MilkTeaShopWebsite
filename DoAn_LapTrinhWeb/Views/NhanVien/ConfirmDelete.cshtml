@@ -1,0 +1,22 @@
+﻿@using DoAn_LapTrinhWeb.Models;
+@model List<SanPham>
+
+<h3>Xác nhận xóa sản phẩm</h3>
+<form method="post" action="/NhanVien/ConfirmDelete">
+    <p>Bạn có chắc chắn muốn xóa những sản phẩm này?</p>
+
+    <ul>
+        @foreach (var product in Model)
+        {
+            <li>@product.TenSanPham</li>
+        }
+    </ul>
+
+    @foreach (var product in Model)
+    {
+        <input type="hidden" name="selectedProducts" value="@product.MaSanPham" />
+    }
+
+    <button type="submit" class="btn btn-danger">Xóa</button>
+    <a href="@Url.Action("Products")" class="btn btn-secondary">Hủy bỏ</a>
+</form>

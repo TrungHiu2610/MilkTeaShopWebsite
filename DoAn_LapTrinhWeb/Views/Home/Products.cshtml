@@ -3,24 +3,46 @@
 
 @{
     ViewBag.Title = "Products";
-    <link rel="stylesheet" href="~/Content/ProductItem.css" />
     Layout = "~/Views/Shared/KhachHang.cshtml";
 }
+<div class="breadcrumbs">
+    <div class="locations" style="margin-left: 15%;">
+        <a href="@Url.Action("Index", "Home")"><img src="~/Content/Image/home.svg" /></a>
+    </div>
+    <div class="locations">
+        <img src="~/Content/Image/Next.svg" />
+    </div>
+    <div class="locations">
+        <span style="color: #C58A66">Danh mục sản phẩm</span>
+    </div>
+</div>
 
 <div class="product_container">
     <div class="menu">
+        <div class="menu_sub_header">
+            <img src="~/Content/Image/ButtonFilter.svg" />
+        </div>
         @Html.Action("Menu_Product", "Home")
     </div>
     <div class="products">
-        <h2>DANH SÁCH SẢN PHẨM</h2>
+        <div class="menu_sub_header">
+            <div class="sort_title">
+                Sắp xếp theo:
+            </div>
+            <select class="sort_dropdown" onchange="location = this.value;">
+                <option value="" selected>Phổ biến nhất</option>
+                <option value="">Giá cao nhất</option>
+                <option value="">Giá thấp nhất</option>
+            </select>
+        </div>
         <div class="row">
             @foreach (SanPham sp in Model)
             {
                 <div class="product-item">
-                    <div class="corner-icons">
+                    @*<div class="corner-icons">
                         <a href="#"><img src="~/Content/Image/AddToWishList.svg" alt="Add to Wish List" /></a>
                         <a href="#"><img src="~/Content/Image/QuickView.svg" alt="Quick View" /></a>
-                    </div>
+                    </div>*@
                     <div class="card">
                         <a href="/Home/ProductDetails/@sp.MaSanPham">
                             <img src="~/Content/HinhAnh/@sp.HinhAnh" alt="Alternate Text" class="card-img-top" />
@@ -28,11 +50,13 @@
                         <div class="card-body">
                             <div class="card-title">
                                 <p>@sp.TenSanPham</p>
-                                <p style="font-size:16px; font-weight:500">@sp.Gia.ToString("N0")</p>
+                                <p style="font-size:16px; font-weight:500">
+                                    @string.Format("{0:N0} VND", sp.Gia)
+                                </p>
                             </div>
                             <div class="card-btn">
-                                <a href="/Home/AddToCart?MaSP=@sp.MaSanPham&SoLuong=1">
-                                    <img style="align-self:flex-end" src="~/Content/Image/Add To Cart.svg" />
+                                <a href="/Home/AddToCart?MaSP=@sp.MaSanPham&SoLuong=1&MaLoaiSP=@ViewBag.MaLoaiSP">
+                                    <img class="img-card-btn" src="~/Content/Image/Add To Cart.svg" />
                                 </a>
                             </div>
                         </div>

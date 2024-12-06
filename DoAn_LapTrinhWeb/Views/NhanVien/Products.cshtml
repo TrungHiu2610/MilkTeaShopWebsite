@@ -1,0 +1,165 @@
+﻿@using DoAn_LapTrinhWeb.Models;
+@using PagedList.Mvc
+@model PagedList.IPagedList<SanPham>
+
+@{
+    ViewBag.Title = "Products";
+    Layout = "~/Views/Shared/_LayoutPageNhanVien.cshtml";
+}
+
+<div class="breadcrumbs">
+    <div class="locations" style="margin-left: 15%;">
+        <a href="@Url.Action("Index", "Home")"><img src="~/Content/Image/home.svg" /></a>
+    </div>
+    <div class="locations">
+        <img src="~/Content/Image/Next.svg" />
+    </div>
+    <div class="locations">
+        <span style="color: #C58A66">Danh Sách Sản Phẩm</span>
+    </div>
+</div>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["Message"]
+    </div>
+}
+
+<div class="container justify-content-center">
+    <!-- Form tìm kiếm -->
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="form-inline">
+                <form method="post" action="/NhanVien/Products">
+                    <input type="text" name="maSP" placeholder="Mã sản phẩm" class="form-control mr-3" />
+                    <input type="text" name="tenSP" placeholder="Tên sản phẩm" class="form-control mr-3" />
+                    @Html.DropDownList("MaLoai", (SelectList)ViewBag.DanhMucLoai, "Chọn loại sản phẩm", new { @class = "form-control mr-3" })
+                    <input type="submit" value="Lọc" class="btn bg-success mr-3" />
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form thao tác -->
+    <form method="post" action="/NhanVien/HandleAction" id="actionForm">
+        <!-- Dòng thao tác -->
+        <div class="row mt-3">
+            <div class="col-12 d-flex">
+                <!-- Dropdown "Thêm mới" -->
+                <div class="dropdown mr-3">
+                    <button class="btn bg-success dropdown-toggle text-white" type="button" id="dropdownAdd" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Thêm mới
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownAdd">
+                        <button type="submit" name="action" value="AddByView" class="dropdown-item" style="cursor:pointer">Thêm</button>
+                        <button type="submit" name="action" value="AddByExcelFile" class="dropdown-item" style="cursor:pointer">Nhập bằng Excel</button>
+                    </div>
+                </div>
+
+                <!-- Dropdown "Thao tác" -->
+                <div class="dropdown">
+                    <button class="btn bg-primary dropdown-toggle text-white" type="button" id="dropdownAction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Thao tác
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownAction">
+                        <button type="submit" name="action" value="Edit" class="dropdown-item">Sửa</button>
+                        <button type="submit" name="action" value="Delete" class="dropdown-item">Xóa</button>
+                        <button type="submit" name="action" value="InventoryCheck" class="dropdown-item">Kiểm kho</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Danh sách sản phẩm -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <table class="table table-bordered">
+                    <thead style="background-color: gray; color: white;">
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="checkAll" />
+                            </td>
+                            <td>Ảnh</td>
+                            <td>Mã hàng</td>
+                            <td>Tên sản phẩm</td>
+                            <td>Giá bán</td>
+                            <td>Tồn</td>
+                            <td>Trạng thái</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (SanPham sp in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="selectedProducts" value="@sp.MaSanPham" />
+                                </td>
+                                <td>
+                                    @if (string.IsNullOrEmpty(sp.HinhAnh))
+                                    {
+                                        <img src="~/Content/Image/default_product.svg" style="width:30px;height:50px" />
+                                    }
+                                    else
+                                    {
+                                        <img src="~/Content/HinhAnh/@sp.HinhAnh" style="width:30px;height:50px" />
+                                    }
+                                </td>
+                                <td>
+                                    @sp.MaSanPham
+                                </td>
+                                <td>
+                                    @sp.TenSanPham
+                                </td>
+                                <td>
+                                    @sp.Gia.ToString("N0") VNĐ
+                                </td>
+                                <td>
+                                    @sp.SoLuong
+                                </td>
+                                <td>
+                                    @if ((bool)sp.TrangThai)
+                                    {
+                                        <span class="text-success">Đang bán</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-danger">Ngừng bán</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="pagination-container">
+                    @Html.PagedListPager(
+                        Model,
+                        page => Url.Action("Products", new { page }),
+                        new PagedListRenderOptions
+                        {
+                            DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                            DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                            DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                            DisplayPageCountAndCurrentLocation = false,
+                            MaximumPageNumbersToDisplay = 5,
+                            DisplayEllipsesWhenNotShowingAllPageNumbers = true,
+                            UlElementClasses = new[] { "pagination", "justify-content-center" }, 
+                            LiElementClasses = new[] { "page-item" } 
+                        }
+                    )
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById("checkAll").addEventListener("click", function () {
+        const checkboxes = document.querySelectorAll("input[name='selectedProducts']");
+        for (const checkbox of checkboxes) {
+            checkbox.checked = this.checked;
+        }
+    });
+</script>

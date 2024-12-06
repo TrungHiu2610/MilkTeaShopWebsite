@@ -1,65 +1,90 @@
 ﻿@model DoAn_LapTrinhWeb.Models.SanPham
-
 @{
     ViewBag.Title = "ProductDetails";
     Layout = "~/Views/Shared/KhachHang.cshtml";
+    <link href="~/Content/ProductDetails.css" rel="stylesheet" />
 }
+@*@Html.Action("GetSize", "Home", new {idSanPham = Model.MaSanPham})
 
-<h2>ProductDetails</h2>
-
-<fieldset>
-    <legend>SanPham</legend>
-
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.MaLoaiSP)
+    @Html.Action("GetTopping", "Home")*@
+<div class="breadcrumbs">
+    <div class="locations" style="margin-left: 15%;">
+        <a href="@Url.Action("Index", "Home")"><img src="~/Content/Image/home.svg" /></a>
     </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.MaLoaiSP)
+    <div class="locations">
+        <img src="~/Content/Image/Next.svg" />
     </div>
-
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.TenSanPham)
+    <div class="locations">
+        <a href="/Home/Products/" style="text-decoration:none; color: #808080">Danh mục sản phẩm</a>
     </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.TenSanPham)
+    <div class="locations">
+        <img src="~/Content/Image/Next.svg" />
     </div>
-
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.Gia)
+    <div class="locations">
+        <a href="/Home/Products/@Model.MaLoaiSP" style="text-decoration:none; color: #808080">@Model.LoaiSanPham.TenLoaiSP</a>
     </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.Gia)
+    <div class="locations">
+        <img src="~/Content/Image/Next.svg" />
     </div>
-
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.MoTa)
+    <div class="locations">
+        <span style="color: #C58A66">@Model.TenSanPham</span>
     </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.MoTa)
+</div>
+<div class="container">
+    <div class="product-detail-img">
+        <img src="~/Content/HinhAnh/@Model.HinhAnh" alt="@Model.HinhAnh" />
     </div>
-
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.HinhAnh)
+    <div class="product-detail-info">
+        <span class="product-name">
+            @Model.TenSanPham
+        </span>
+        <div class="rating-n-sku">
+            <div class="rating">
+                <img src="~/Content/Image/Rating.svg" alt="Alternate Text" />
+            </div>
+            <span style="font-family:'fz poppins-medium';font-size:14px;color: #B3B3B3;margin-right:12px">•</span>
+            <div class="sku">
+                <span style="font-weight:600; color: #333">MSP:</span> @Model.MaSanPham
+            </div>
+        </div>
+        <div class="price">
+            @string.Format("{0:N0} VND", Model.Gia)
+        </div>
+        <div class="divider"></div>
+        <div class="size-picking">
+            <p>Chọn Size:</p>
+            @foreach (var size in ViewBag.lst_size)
+            {
+                <div class="btn_size">
+                    @size.Size.TenSize + @string.Format("{0:N0} đ", size.GiaThem)
+                </div>
+            }
+        </div>
+        <div class="size-picking">
+            <p>Chọn Topping:</p>
+            @foreach (var topping in ViewBag.lst_topping)
+            {
+                if (!string.IsNullOrWhiteSpace(topping.TenTopping))
+                {
+                    <div class="btn_size">
+                        @topping.TenTopping
+                    </div>
+                }
+            }
+        </div>
+        <div class="add-to-cart">
+            <div class="cart-quantity">
+                <img src="~/Content/Image/minus.svg" />
+                <input type="text" value="1" />
+                <img src="~/Content/Image/plus.svg" />
+            </div>
+            <div class="add-to-cart_button">
+                Thêm vào giỏ hàng
+                <img src="~/Content/Image/Cart_Detail.svg" />
+            </div>
+        </div>
+        <div class="product-detail-type">
+            <span style="font-weight:600; color: #333">Loại sản phẩm:</span> @Model.LoaiSanPham.TenLoaiSP
+        </div>
     </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.HinhAnh)
-    </div>
-
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.TrangThai)
-    </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.TrangThai)
-    </div>
-
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.SoLuong)
-    </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.SoLuong)
-    </div>
-</fieldset>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id=Model.MaSanPham }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+</div>

@@ -42,6 +42,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
@@ -144,6 +150,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Image\default_product.svg" />
+    <Content Include="Content\Pagination.css" />
     <Content Include="Content\bootstrap\css\bootstrap-grid.css" />
     <Content Include="Content\bootstrap\css\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap\css\bootstrap-reboot.css" />
@@ -155,12 +163,18 @@
     <Content Include="Content\bootstrap\js\bootstrap.js" />
     <Content Include="Content\bootstrap\js\bootstrap.min.js" />
     <Content Include="Content\bootstrap\js\jquery-3.3.1.min.js" />
+    <Content Include="Content\Image\Add To Cart_Clicked.svg" />
+    <Content Include="Content\Image\Add To Cart_Hover.svg" />
     <Content Include="Content\Image\AddToWishList.svg" />
+    <Content Include="Content\Image\ButtonFilter.svg" />
+    <Content Include="Content\Image\Button_MuaThem.svg" />
     <Content Include="Content\Image\cancel_product.svg" />
+    <Content Include="Content\Image\Cart_Detail.svg" />
     <Content Include="Content\Image\minus.svg" />
     <Content Include="Content\Image\plus.svg" />
     <Content Include="Content\Image\QuickView.svg" />
-    <Content Include="Content\ProductItem.css" />
+    <Content Include="Content\Image\Rating.svg" />
+    <Content Include="Content\Image\Vector_DropDown.svg" />
     <Content Include="Content\404.css" />
     <Content Include="Content\HinhAnh\Chanh-Aiyu-trân-châu-trắng-2.png" />
     <Content Include="Content\HinhAnh\kem-tc.png" />
@@ -178,7 +192,6 @@
     <Content Include="Content\HinhAnh\tra-sua-xoai.png" />
     <Content Include="Content\HinhAnh\Yakult-Dao-Da-Xay.png" />
     <Content Include="Content\Image\Add To Cart.svg" />
-    <Content Include="Content\Image\AddToCart_Hover.svg" />
     <Content Include="Content\Image\Background.png" />
     <Content Include="Content\Image\Featured.svg" />
     <Content Include="Content\Image\home.svg" />
@@ -192,6 +205,7 @@
     <Content Include="Content\Image\User_hover.svg" />
     <Content Include="Content\Image\User_none.svg" />
     <Content Include="Content\Main.css" />
+    <Content Include="Content\PagedList.css" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -246,16 +260,12 @@
     <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
+    <Content Include="Content\ProductDetails.css" />
     <Content Include="Content\ViewCart.css" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\Font\FZ Poppins-Medium.ttf" />
     <Content Include="Content\Image\web_moi_-_desktop_945bb18b1a18460fb9faa64e72fea441.webp" />
-    <Content Include="Models\DB_QL_CuaHangTraSua.dbml">
-      <Generator>MSLinqToSQLGenerator</Generator>
-      <LastGenOutput>DB_QL_CuaHangTraSua.designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Content\bootstrap\css\bootstrap-grid.css.map" />
     <Content Include="Content\bootstrap\css\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap\css\bootstrap-reboot.css.map" />
@@ -266,9 +276,11 @@
     <Content Include="Content\bootstrap\js\bootstrap.bundle.min.js.map" />
     <Content Include="Content\bootstrap\js\bootstrap.js.map" />
     <Content Include="Content\bootstrap\js\bootstrap.min.js.map" />
-    <None Include="Models\DB_QL_CuaHangTraSua.dbml.layout">
-      <DependentUpon>DB_QL_CuaHangTraSua.dbml</DependentUpon>
-    </None>
+    <Content Include="Models\DB_QL_CuaHangTraSua.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>DB_QL_CuaHangTraSua.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />
@@ -307,6 +319,14 @@
     <Content Include="Views\Home\Menu_Product.cshtml" />
     <Content Include="Views\Home\ProductDetails.cshtml" />
     <Content Include="Views\Home\ViewCart.cshtml" />
+    <Content Include="Views\Home\CheckOut.cshtml" />
+    <Content Include="Views\Home\GetTopping.cshtml" />
+    <Content Include="Views\Home\GetSize.cshtml" />
+    <Content Include="Views\Shared\_LayoutPageNhanVien.cshtml" />
+    <Content Include="Views\NhanVien\Products.cshtml" />
+    <Content Include="Views\NhanVien\AddProduct.cshtml" />
+    <Content Include="Views\NhanVien\EditProduct.cshtml" />
+    <Content Include="Views\NhanVien\ConfirmDelete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -316,6 +336,11 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Models\DB_QL_CuaHangTraSua.dbml.layout">
+      <DependentUpon>DB_QL_CuaHangTraSua.dbml</DependentUpon>
+    </None>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

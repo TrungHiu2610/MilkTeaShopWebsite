@@ -1,0 +1,91 @@
+﻿@model DoAn_LapTrinhWeb.Models.SanPham
+
+@{
+    ViewBag.Title = "AddProduct";
+    Layout = "~/Views/Shared/_LayoutPageNhanVien.cshtml";
+}
+
+@if (!string.IsNullOrEmpty(ViewBag.Message as string))
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.Message
+    </div>
+}
+
+<div class="breadcrumbs">
+    <div class="locations" style="margin-left: 15%;">
+        <a href="@Url.Action("Index", "Home")"><img src="~/Content/Image/home.svg" /></a>
+    </div>
+    <div class="locations">
+        <img src="~/Content/Image/Next.svg" />
+    </div>
+    <div class="locations">
+        <span style="color: #C58A66">Thêm Sản Phẩm</span>
+    </div>
+</div>
+
+<div class="container">
+    <form method="post" action="/NhanVien/AddProduct" enctype="multipart/form-data">
+        <fieldset>
+            <div class="form-group">
+                <label>Loại</label>
+                @Html.DropDownList("MaLoaiSP", (SelectList)ViewBag.DanhMucLoai, "Chọn loại sản phẩm", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.MaLoaiSP, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <label>Tên</label>
+                <input type="text" id="TenSanPham" name="TenSanPham" class="form-control" />
+                @Html.ValidationMessageFor(model => model.TenSanPham, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <label>Giá</label>
+                <input type="text" id="Gia" name="Gia" class="form-control" />
+                @Html.ValidationMessageFor(model => model.Gia, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <label>Mô Tả</label>
+                <input type="text" id="MoTa" name="MoTa" class="form-control" />
+                @Html.ValidationMessageFor(model => model.MoTa, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <label>Hình Ảnh</label>
+                <input type="file" name="fileProductImg" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label>Trạng Thái</label>
+                <div>
+                    <input type="radio" name="TrangThai" value="true" />
+                    <label>Đang bán</label>
+                </div>
+                <div>
+                    <input type="radio" name="TrangThai" value="false" />
+                    <label>Ngừng bán</label>
+                </div>
+                @Html.ValidationMessageFor(model => model.TrangThai, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <label>Số Lượng</label>
+                <input type="number" id="SoLuong" name="SoLuong" class="form-control" />
+                @Html.ValidationMessageFor(model => model.SoLuong, "", new { @class = "text-danger" })
+            </div>
+
+
+            <div>
+                <input type="radio" name="action" value="ThemTiep" checked />
+                <label>Thêm tiếp</label>
+                <input type="radio" name="action" value="QuayLaiDanhSach" />
+                <label>Quay lại danh sách</label>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Lưu" class="btn btn-success" />
+            </div>
+        </fieldset>
+    </form>
+</div>

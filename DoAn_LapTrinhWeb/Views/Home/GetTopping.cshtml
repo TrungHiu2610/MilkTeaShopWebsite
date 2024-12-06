@@ -1,0 +1,18 @@
+﻿@using DoAn_LapTrinhWeb.Models;
+@model List<Topping>
+
+<div class="menu_title">
+    Danh Mục Toppings
+</div>
+<ul class="menu_nav flex-column">
+    @foreach (Topping item in Model)
+    {
+        <li class="menu_item">
+            <div class="menu_link">
+                <h1>
+                    @item.TenTopping
+                </h1>
+            </div>
+        </li>
+    }
+</ul>

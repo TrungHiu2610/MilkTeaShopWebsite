@@ -1,13 +1,18 @@
 ﻿@using DoAn_LapTrinhWeb.Models;
 @model List<LoaiSanPham>
 
-<ul class="nav flex-column">
+<div class="menu_title">
+    Tất Cả Danh Mục
+</div>
+<ul class="menu_nav flex-column">
     @foreach (LoaiSanPham item in Model)
     {
-        <li>
-            <a class="nav-link" href="/Home/Products/@item.MaLoaiSP">
-                @item.TenLoaiSP
-            </a>
+        <li class="menu_item">
+            <div class="menu_link">
+                <a class="nav-link" href="/Home/Products/@item.MaLoaiSP">
+                    @item.TenLoaiSP
+                </a>
+            </div>
         </li>
     }
 </ul>

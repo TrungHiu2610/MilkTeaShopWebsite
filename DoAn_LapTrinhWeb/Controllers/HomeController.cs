@@ -106,22 +106,16 @@ namespace DoAn_LapTrinhWeb.Controllers
                 danhSachSP = data.SanPhams.ToList();
             else
                 danhSachSP = data.SanPhams.Where(t => t.MaLoaiSP == id).ToList();
+
+            ViewBag.MaLoaiSP = id;
             return View(danhSachSP);
         }
-        public ActionResult ProductDetails(string id)
-        {
-            SanPham sanPham = new SanPham();
-            if (id == null)
-                return RedirectToAction("NotFound", "Error");
-            else
-                sanPham = data.SanPhams.FirstOrDefault(t => t.MaSanPham == id);
-            return View(sanPham);
-        }
-        public ActionResult AddToCart(string MaSP, int SoLuong)
+        public ActionResult AddToCart(string MaSP, int SoLuong, string MaLoaiSP)
         {
             int currentUserId;
             GioHang cart = Session["gh"] as GioHang;
             NguoiDung user = Session["acc"] as NguoiDung;
+
             if (cart == null)
             {
                 Session["gh"] = new GioHang();
@@ -142,8 +136,8 @@ namespace DoAn_LapTrinhWeb.Controllers
                 string sMaGH = "GH0001";
                 if (data.GioHangs.ToList().Count > 0)
                 {
-                    GioHang gh = data.GioHangs.OrderByDescending(t => t.MaGioHang).Take(1) as GioHang;
-                    int iMaGH = int.Parse(gh.MaGioHang.Substring(2, gh.MaGioHang.Length));
+                    GioHang gh = data.GioHangs.OrderByDescending(t => t.MaGioHang).FirstOrDefault();
+                    int iMaGH = int.Parse(gh.MaGioHang.Substring(2)) + 1;
                     sMaGH = "GH" + iMaGH.ToString("D3");
                 }
                 cart = new GioHang { MaGioHang = sMaGH, MaNguoiDung = currentUserId, NgayTao = DateTime.Now, TongTien = 0, TrangThai = "Đang xử lý" };
@@ -157,7 +151,7 @@ namespace DoAn_LapTrinhWeb.Controllers
                 decimal donGia = data.SanPhams.FirstOrDefault(t => t.MaSanPham == MaSP).Gia;
                 decimal? giaSize = data.QuanLySP_Sizes.FirstOrDefault(t => t.MaSanPham == MaSP && t.MaSize == "SZ01").GiaThem;
                 decimal giaTopping = data.Toppings.FirstOrDefault(t => t.MaTopping == 1).Gia;
-                cartItem = new ChiTietGioHang { MaGioHang = cart.MaGioHang, MaSanPham = MaSP.ToString(), SoLuong = SoLuong, MaSize = "SZ01", MaTopping = 1, ThanhTien = donGia + giaSize + giaTopping };
+                cartItem = new ChiTietGioHang { MaGioHang = cart.MaGioHang, MaSanPham = MaSP.ToString(), SoLuong = SoLuong, MaSize = "SZ01", MaTopping = 0, ThanhTien = donGia + giaSize + giaTopping }; //Cho topping mặc định là 0, để trống ý
                 data.ChiTietGioHangs.InsertOnSubmit(cartItem);
                 data.SubmitChanges();
             }
@@ -169,9 +163,15 @@ namespace DoAn_LapTrinhWeb.Controllers
                 cartItem.SoLuong += SoLuong;
                 cartItem.ThanhTien += (donGia + giaSize + giaTopping) * SoLuong;
             }
+
             Session["gh"] = cart;
             data.SubmitChanges();
-            return RedirectToAction("Products");
+
+            // Chuyển hướng đến trang Products với hoặc không có tham số MaLoaiSP
+            if (string.IsNullOrEmpty(MaLoaiSP))
+                return RedirectToAction("Products"); // Không có id => trang mặc định
+            else
+                return RedirectToAction("Products", new { id = MaLoaiSP }); // Chuyển hướng đến danh mục đã chọn
         }
 
         public ActionResult ViewCart()
@@ -184,6 +184,36 @@ namespace DoAn_LapTrinhWeb.Controllers
             List<ChiTietGioHang> cartItems = data.ChiTietGioHangs.Where(t => t.MaGioHang == cart.MaGioHang).ToList();
             return View(cartItems);
         }
+       
+        public ActionResult ProductDetails(string id)
+        {
+            SanPham sanPham = new SanPham();
+            if (id == null)
+                return RedirectToAction("NotFound", "Error");
+            else
+                sanPham = data.SanPhams.FirstOrDefault(t => t.MaSanPham == id);
 
+            List<Topping> lst_topping = data.Toppings.ToList();
+            ViewBag.lst_topping = lst_topping;
+
+            List<QuanLySP_Size> lst_size = data.QuanLySP_Sizes.Where(t => t.MaSanPham == id).ToList();
+            ViewBag.lst_size = lst_size;
+            return View(sanPham);
+        }
+        // action lấy loại topping
+        public ActionResult GetTopping()
+        {
+            List<Topping> lst_topping = data.Toppings.ToList();
+            return PartialView(lst_topping);
+        }
+        public ActionResult GetSize(string idSanPham)
+        {
+            List<QuanLySP_Size> lst_size = data.QuanLySP_Sizes.Where(t => t.MaSanPham == idSanPham).ToList();
+            return PartialView(lst_size);
+        }
+        public ActionResult CheckOut()
+        {
+            return View();
+        }
     }
 }

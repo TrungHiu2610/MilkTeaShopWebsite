@@ -234,6 +234,7 @@
     border-bottom: 1px solid #E5E5E5; /* Đường viền dưới thanh thông tin */
     height: 68px;
     font-weight: 400;
+    color: #808080;
 }
 
     .breadcrumbs .locations {
@@ -334,7 +335,7 @@
     font-size: 13px;
 }
 /*-----------------PRODUCTS---------------*/
-/* Container căn giữa nội dung và căn lề phải/trái 15% */
+/*/* Container căn giữa nội dung và căn lề phải/trái 15% */
 .product_container {
     display: flex;
     justify-content: space-between; /* Căn đều các phần tử trong container */
@@ -354,14 +355,15 @@
 /* Flexbox cho các sản phẩm */
 .row {
     display: flex;
-    flex-wrap: wrap;
-    gap: 24px; /* Gutter = 24px */
+    flex-wrap: wrap; /* Để các sản phẩm tự động xuống dòng khi không đủ không gian */
+    gap: 24px; /* Khoảng cách 24px giữa các sản phẩm */
+    justify-content: flex-start; /* Căn các sản phẩm về bên trái */
 }
 
-/* Mỗi sản phẩm chiếm 1/4 không gian của dòng (3 sản phẩm trên 1 dòng) */
+/* Mỗi sản phẩm có kích thước cố định là 312px */
 .product-item {
-    width: calc(33.3333% - 24px); /* 100% chia cho 3 sản phẩm */
-    margin-bottom: 20px; /* Khoảng cách dưới mỗi sản phẩm */
+    flex: 0 0 304px; /* Chiều rộng cố định là 312px, không cho co giãn */
+    margin-bottom: 24px; /* Khoảng cách dưới mỗi sản phẩm cũng là 24px */
     height: 407px; /* Chiều cao của mỗi sản phẩm */
 }
 
@@ -372,10 +374,19 @@
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
+    position:relative;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     display: flex;
-    position:relative;
+    position: relative;
     flex-direction: column; /* Để các phần trong card theo chiều dọc */
+}
+.card:hover {
+    border: 1px solid #DFA586;
+    box-shadow: 0 0px 12px rgba(185, 27, 33, 0.3);
+}
+.card:active {
+    border: 1px solid #DFA586;
+    box-shadow: none;
 }
 
 .card-img-top {
@@ -389,29 +400,146 @@
     text-align: center;
     height: auto;
     width: 100%;
-    box-sizing:border-box;
-    /*flex-grow: 1;*/
-    display:flex;
-    justify-content:flex-start;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-start;
     align-items: center;
-    position:absolute;
+    position: absolute;
     bottom: 0;
 }
 
 .card-title {
     font-size: 14px;
     text-align: left;
-    display:flex;
-    flex-direction:column;
+    display: flex;
+    flex-direction: column;
 }
+
 .card-title p {
     margin: 0;
 }
 
 .card-btn {
-    width:auto;
+    width: auto;
     margin-left: auto;
     display: flex;
     justify-content: flex-end; 
     align-items: center; 
+    transition: 0.2s;
 }
+    .card-btn:hover .img-card-btn {
+        content: url('Image/Add To Cart_Hover.svg');
+    }
+    .card-btn:active .img-card-btn {
+        content: url('Image/Add To Cart_Clicked.svg');
+    }
+.out-of-stock {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 88px;
+    height: 30px;  /* Đảm bảo chiều cao đủ lớn để căn giữa */
+    background-color: black;
+    color: white;
+    border-radius: 4px;
+    font-family: 'Fz Poppins',sans-serif;
+    font-size: 14px;  /* Điều chỉnh kích thước font để phù hợp */
+    
+    display: flex;
+    justify-content: center;  /* Căn giữa theo chiều ngang */
+    align-items: center;      /* Căn giữa theo chiều dọc */
+}
+/*-----------------MENU---------------*/
+.menu_nav {
+    list-style-type: none; /* Bỏ dấu chấm đầu dòng */
+    padding: 0; /* Bỏ khoảng cách bên trong */
+    margin: 0; /* Bỏ khoảng cách bên ngoài */
+    font-family: 'Fz Poppins', sans-serif;
+    font-size: 16px;
+    font-weight:400;
+}
+
+.menu_item {
+    height: 48px; /* Chiều cao của mỗi item */
+    border-bottom: 1px solid #E6E6E6;
+    background-color: white;
+}
+
+.menu_link {
+    height: 100%; /* Đảm bảo div chiếm toàn bộ chiều cao của li */
+    display: flex; /* Sử dụng flexbox để căn giữa nội dung */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    padding: 0 10px; /* Thêm khoảng cách bên trái và bên phải */
+    transition: background-color 0.3s; /* Hiệu ứng chuyển màu mượt mà */
+}
+
+.menu_link a {
+    text-decoration: none; /* Bỏ gạch chân */
+    color: inherit; /* Kế thừa màu sắc từ cha */
+    width: 100%; /* Đảm bảo link chiếm toàn bộ chiều rộng */
+}
+
+.menu_item:hover .menu_link {
+    background-color: #FFF4EE; /* Màu nền khi hover */
+}
+
+.menu_item.active .menu_link {
+    background-color: rgba(235, 153, 110, 0.88); /* Màu nền khi đang được chọn với độ trong suốt 12% */
+    color: inherit; /* Màu chữ khi đang được chọn */
+}
+
+.menu_title {
+    padding: 10px;
+    font-family: 'Fz Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+}
+.menu_sub_header {
+    margin-top: 48px;
+    margin-bottom: 24px;
+    height: 45px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.menu_sub_header .sort_title {
+    font-family: 'Fz Poppins', sans-serif;
+    font-size: 16px;
+    color: #808080;
+}
+
+.sort_dropdown {
+    margin-left: 8px;
+    width: 166px;
+    padding-left: 16px;  /* Padding trái */
+    padding-top: 10px;   /* Padding trên */
+    padding-bottom: 10px; /* Padding dưới */
+    font-family: 'Fz Poppins', sans-serif;
+    font-size: 14px;
+    color: #808080;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    outline: none;
+    position: relative;
+    appearance: none; /* Tắt mũi tên mặc định */
+    -webkit-appearance: none; /* Đảm bảo không xuất hiện mũi tên trên Safari */
+}
+
+.sort_dropdown::-ms-expand {
+    display: none; /* Tắt mũi tên mặc định trên IE */
+}
+
+.sort_dropdown {
+    background: url('Image/Vector_DropDown.svg') no-repeat;
+    background-position: right 10px center; /* Đặt mũi tên cách lề phải 10px */
+    background-size: 10px 6px; /* Kích thước của mũi tên */
+    padding-right: 30px; /* Khoảng cách từ văn bản đến mũi tên */
+}
+
+.sort_dropdown:focus {
+    border-color: #c57d7d;  /* Khi chọn dropdown thì đổi màu viền */
+}
+

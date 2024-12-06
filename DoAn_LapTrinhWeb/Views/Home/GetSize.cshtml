@@ -1,0 +1,18 @@
+﻿@using DoAn_LapTrinhWeb.Models;
+@model List<QuanLySP_Size>
+
+<div class="menu_title">
+    Danh Mục Size
+</div>
+<ul class="menu_nav flex-column">
+    @foreach (QuanLySP_Size item in Model)
+    {
+        <li class="menu_item">
+            <div class="menu_link">
+                <h1>
+                    @item.Size.TenSize + @item.GiaThem
+                </h1>
+            </div>
+        </li>
+    }
+</ul>

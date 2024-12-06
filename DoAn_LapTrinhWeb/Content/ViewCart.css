@@ -3,19 +3,39 @@
     src: url('font/fz poppins-medium.ttf') format('truetype');
 }
 
-* {
+/** {
     font-family: 'FZ Poppins', sans-serif;
-}
+}*/
+
 .container {
-    max-width: 1200px;
-    margin: auto;
-    padding: 20px;
+    font-family: 'FZ Poppins', sans-serif;
+    margin-left: auto; /* Căn giữa lưới */
+    margin-right: auto; /* Căn giữa lưới */
+    display: grid;
+    grid-template-columns: repeat(12, 88px); /* 12 cột, mỗi cột rộng 88px */
+    gap: 24px; /* Khoảng cách giữa các cột là 24px */
+    justify-content: center; /* Căn giữa các phần tử trong container */
+    padding: 0 15%; /* Thêm padding trái và phải 15% */
+    box-sizing: border-box; /* Đảm bảo padding không ảnh hưởng đến chiều rộng */
+    font-size:14px;
+}
+
+.col-8 {
+    grid-column: span 8; /* Chiếm 8 cột */
+}
+
+.col-4 {
+    grid-column: span 4; /* Chiếm 4 cột */
 }
 
 .header {
-    font-size: 36px;
-    text-align: center;
-    margin-bottom: 20px;
+    font-family: 'fz poppins-medium';
+    font-size: 28px;
+    text-align: left;
+    margin-top: 24px;
+    margin-bottom: 24px;
+    margin-left: 15%;
+    font-weight: 600;
 }
 
 .shopping-cart {
@@ -23,81 +43,187 @@
 }
 
 .table {
-    width: 100%;
-    margin-bottom: 20px;
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
     border-collapse: collapse;
+    border-radius: 4px; /* Thêm border-radius cho bảng */
+    overflow: hidden; /* Đảm bảo các góc bị bo không bị vỡ */
 }
 
-    .table th, .table td {
-        padding: 10px;
+    .table th {
+        font-size: 14px;
+        font-weight: 500;
+        color: #808080;
+        padding: 16px;
         border: 1px solid #ddd;
-        text-align: left;
+        text-align: left; /* Căn giữa nội dung theo chiều ngang */
+        vertical-align: middle; /* Căn giữa theo chiều dọc */
     }
 
-.quantity {
+    .table td {
+        padding: 16px;
+        border: 1px solid #ddd;
+        text-align: center; /* Căn giữa nội dung theo chiều ngang */
+        vertical-align: middle; /* Căn giữa theo chiều dọc */
+    }
+
+    .table th:first-child {
+        border-top-left-radius: 8px; /* Bo góc trái trên */
+    }
+
+    .table th:last-child {
+        border-top-right-radius: 8px; /* Bo góc phải trên */
+    }
+
+    .table tr:last-child td:first-child {
+        border-bottom-left-radius: 4px; /* Bo góc trái dưới */
+    }
+
+    .table tr:last-child td:last-child {
+        border-bottom-right-radius: 4px; /* Bo góc phải dưới */
+    }
+
+    .table td:last-child {
+        border-left: none; /* Ẩn border bên trái của ô thứ hai */
+    }
+    /* Ẩn border bên trái của ô có hình ảnh */
+    .table td:nth-last-child(2) {
+        border-right: none; /* Ẩn border bên phải của ô đầu tiên */
+    }
+
+.product-info {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: center; /* Căn giữa theo chiều dọc */
+    justify-content: flex-start; /* Căn giữa theo chiều ngang */
+    text-align: left; /* Căn trái cho tên sản phẩm */
 }
 
-    .quantity img {
-        width: 24px;
-        height: 24px;
-        cursor: pointer;
+    .product-info img {
+        width: 50px;
+        height: 50px;
+        margin-right: 10px; /* Khoảng cách giữa hình ảnh và tên sản phẩm */
     }
+
+.quantity img {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    vertical-align: middle; /* Căn giữa ảnh theo chiều dọc */
+}
+
+.quantity img {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    vertical-align: middle; /* Căn giữa ảnh theo chiều dọc */
+}
 
 .input-box {
-    width: 50px;
-    text-align: center;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin: 0 5px;
+    width: 40px; /* Đảm bảo chiều rộng cho input */
+    text-align: center; /* Căn giữa giá trị trong input */
+    vertical-align: middle; /* Căn giữa input */
 }
 
 .discount-code {
     display: flex;
-    justify-content: space-between;
+    align-items: center; /* Căn giữa theo chiều dọc */
     margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    height: 92px;
+}
+.discount-code span {
+    font-size: 20px;
+    margin-left: 20px;
+    margin-right: 24px;
+    font-weight: 500;
+}
+
+.input-container {
+    display: flex;
+    align-items: center; 
+    height: 52px; 
+    border: 1px solid #ddd; 
+    border-radius: 46px; 
+    overflow: hidden; 
+    flex: 1; 
+    margin-right: 20px;
+}
+.input-container input {
+    padding-left: 24px;
+    font-size: 16px;
+    color: #999999;
+}
+.input-container button {
+    font-size: 16px;
+    font-weight: 600;
 }
 
 #discountCode {
-    width: 70%;
+    flex: 1; 
     padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding-left: 24px;
+    border: none; 
+    outline: none; 
+    height: 100%; 
 }
 
 .apply-code {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    font-family: 'FZ Poppins', sans-serif;
+    width: 132px; 
+    height: 100%; 
+    padding: 10px; 
+    background-color: black; 
+    color: white; 
+    border: none; 
+    border-radius: 42px; 
+    cursor: pointer; 
 }
 
 .total-payment {
+    width: 100%;
     border: 1px solid #ddd;
-    padding: 20px;
+    padding: 24px;
     border-radius: 4px;
+    margin-bottom: 20px; 
+    box-sizing: border-box; 
+}
+
+.total-payment strong {
+    font-size: 20px;
+    font-weight: 500;
+}
+.total-payment span {
+    font-weight: 600;
 }
 
 .total-products, .shipping-fee, .total-amount {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
+    padding: 12px 0; /* Thêm padding 12px trên và dưới */
+    font-size: 14px; /* Đặt kích thước font chữ là 14px */
+    border-bottom: 1px solid #ddd; /* Thay thế hr bằng border-bottom */
+}
+
+.total-amount {
+    border-bottom: none;
+    font-size: 16px; /* Không có border-bottom cho tổng cộng */
 }
 
 .checkout {
-    width:80%;
-    height:20px;
+    margin-top:20px;
+    width: 100%; 
+    height: 50px; 
     display: block;
     text-align: center;
-    text-decoration:none;
+    text-decoration: none;
     padding: 10px;
     background-color: #C58A66;
     color: white;
-    text-decoration: none;
-    border-radius: 12px;
+    font-weight: 500;
+    font-size: 16px;
+    text-align:center;
+    vertical-align: middle;
+    border-radius: 43px;
     cursor: pointer;
+    box-sizing: border-box; /* Đảm bảo padding không ảnh hưởng đến chiều rộng */
 }
