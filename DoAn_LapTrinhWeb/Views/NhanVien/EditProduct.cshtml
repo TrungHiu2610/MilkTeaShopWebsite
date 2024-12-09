@@ -6,62 +6,120 @@
 }
 
 @model List<SanPham>
+<div class="container">
+    <h3>Sửa sản phẩm</h3>
+    <form method="post" action="/NhanVien/EditProduct" enctype="multipart/form-data">
+        @foreach (var spGroup in Model.GroupBy(sp => sp.MaSanPham))
+        {
+            var sp = spGroup.First();
+            <div class="mb-5 border-bottom pb-4">
+                <h4 class="mb-3">@sp.TenSanPham</h4>
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Thông tin sản phẩm</th>
+                                    <th>Chi tiết</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loại sản phẩm -->
+                                <tr>
+                                    <td>Loại sản phẩm:</td>
+                                    <td>
+                                        @Html.DropDownList(
+                                            "updatedProducts[" + sp.MaSanPham + "].LoaiSanPham.MaLoaiSP",
+                                            new SelectList(ViewBag.DanhMucLoai, "MaLoaiSP", "TenLoaiSP", sp.MaLoaiSP),
+                                            "Chọn loại sản phẩm",
+                                            new { @class = "form-control" }
+                                        )
+                                    </td>
+                                </tr>
 
-<h3>Sửa sản phẩm</h3>
-<form method="post" action="/NhanVien/EditProduct">
-    @foreach (var sp in Model)
-    {
-        <div class="form-group">
-            <label>Loại sản phẩm:</label>
-            @Html.DropDownList(
-            "updatedProducts[" + @sp.MaSanPham + "].LoaiSanPham.MaLoaiSP",
-            new SelectList(ViewBag.DanhMucLoai, "MaLoaiSP", "TenLoaiSP", sp.LoaiSanPham.MaLoaiSP),
-            "Chọn loại sản phẩm",
-            new { @class = "form-control"}
-            )
+                                <!-- Tên sản phẩm -->
+                                <tr>
+                                    <td>Tên sản phẩm:</td>
+                                    <td>
+                                        <input type="text" name="updatedProducts[@sp.MaSanPham].TenSanPham" value="@sp.TenSanPham" class="form-control" />
+                                    </td>
+                                </tr>
 
-        </div>
+                                <!-- Mô tả -->
+                                <tr>
+                                    <td>Mô tả:</td>
+                                    <td>
+                                        <textarea name="updatedProducts[@sp.MaSanPham].MoTa" class="form-control">@sp.MoTa</textarea>
+                                    </td>
+                                </tr>
 
-        <div class="form-group">
-            <label>Tên sản phẩm:</label>
-            <input type="text" name="updatedProducts[@sp.MaSanPham].TenSanPham" value="@sp.TenSanPham" class="form-control" />
-        </div>
+                                <!-- Ảnh hiện tại -->
+                                <tr>
+                                    <td>Ảnh hiện tại:</td>
+                                    <td>
+                                        <img src="~/Content/HinhAnh/@sp.HinhAnh" style="width:150px;height:150px;" />
+                                    </td>
+                                </tr>
 
-        <div class="form-group">
-            <label>Giá bán:</label>
-            <input type="text" name="updatedProducts[@sp.MaSanPham].Gia" value="@sp.Gia" class="form-control" />
-        </div>
+                                <!-- Thay đổi ảnh -->
+                                <tr>
+                                    <td>Thay đổi ảnh:</td>
+                                    <td>
+                                        <input type="file" name="updatedProducts[@sp.MaSanPham].HinhAnh" class="form-control" />
+                                    </td>
+                                </tr>
 
-        <div class="form-group">
-            <label>Tồn kho:</label>
-            <input type="number" name="updatedProducts[@sp.MaSanPham].SoLuong" value="@sp.SoLuong" class="form-control" />
-        </div>
+                                <!-- Số lượng -->
+                                <tr>
+                                    <td>Số lượng:</td>
+                                    <td>
+                                        <input type="number" name="updatedProducts[@sp.MaSanPham].SoLuong" value="@sp.SoLuong" class="form-control" />
+                                    </td>
+                                </tr>
 
-        <div class="form-group">
-            <label>Ảnh hiện tại:</label>
-            <img src="~/Content/HinhAnh/@sp.HinhAnh" style="width:100px;height:100px;" />
-        </div>
-        <div class="form-group">
-            <label>Thay đổi ảnh:</label>
-            <input type="file" name="updatedProducts[@sp.MaSanPham].HinhAnh" class="form-control" />
-        </div>
+                                <!-- Trạng thái -->
+                                <tr>
+                                    <td>Trạng thái:</td>
+                                    <td>
+                                        <select name="updatedProducts[@sp.MaSanPham].TrangThai" class="form-control">
+                                            <option value="true" @((bool)sp.TrangThai ? "selected" : "")>Đang bán</option>
+                                            <option value="false" @((bool)!sp.TrangThai ? "selected" : "")>Ngừng bán</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-
-        <div class="form-group">
-            <label>Trạng thái:</label>
-            <div>
-                <label class="mr-3">
-                    <input type="radio" name="updatedProducts[@sp.MaSanPham].TrangThai" value="true" @if ((bool)sp.TrangThai) { <text> checked</text> } />
-                    <span class="text-success">Đang bán</span>
-                </label>
-                <label>
-                    <input type="radio" name="updatedProducts[@sp.MaSanPham].TrangThai" value="false" @if (!(bool)sp.TrangThai) { <text> checked</text> } />
-                    <span class="text-danger">Ngừng bán</span>
-                </label>
+                    <!-- Danh sách các size -->
+                    <div class="col-md-12">
+                        <h5 class="mb-3">Kích cỡ:</h5>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Size</th>
+                                    <th>Giá</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var spSize in spGroup)
+                                {
+                                    <tr>
+                                        <td>@spSize.Size.TenSize</td>
+                                        <td>
+                                            <input type="number" name="updatedSizes[@sp.MaSanPham][@spSize.MaSize]" value="@double.Parse(spSize.Gia.ToString())" class="form-control" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-        </div>
+        }
 
-    }
+        <button type="submit" class="btn btn-success mr-3">Lưu thay đổi</button>
+        <a href="/NhanVien/Products" class="btn btn-primary text-white" style="width:100px">Quay về trang chủ</a>
+    </form>
 
-    <button type="submit" class="btn btn-success">Lưu thay đổi</button>
-</form>
+</div>

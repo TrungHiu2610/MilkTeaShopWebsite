@@ -16,7 +16,7 @@ namespace DoAn_LapTrinhWeb
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "NhanVien", action = "Products", id = UrlParameter.Optional }
+                defaults: new { controller = "Home", action = "LogIn", id = UrlParameter.Optional }
             );
         }
     }

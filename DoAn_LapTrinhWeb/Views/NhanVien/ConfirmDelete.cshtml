@@ -1,22 +1,32 @@
 ﻿@using DoAn_LapTrinhWeb.Models;
 @model List<SanPham>
 
-<h3>Xác nhận xóa sản phẩm</h3>
-<form method="post" action="/NhanVien/ConfirmDelete">
-    <p>Bạn có chắc chắn muốn xóa những sản phẩm này?</p>
+@{
+    ViewBag.Title = "DeleteProduct";
+    Layout = "~/Views/Shared/_LayoutPageNhanVien.cshtml";
+}
 
-    <ul>
-        @foreach (var product in Model)
-        {
-            <li>@product.TenSanPham</li>
-        }
-    </ul>
+<div class="container">
+    <div class="row d-block">
+        <h3>Xác nhận xóa sản phẩm</h3>
+        <form method="post" action="/NhanVien/ConfirmDelete">
+            <p>Bạn có chắc chắn muốn xóa những sản phẩm này?</p>
 
-    @foreach (var product in Model)
-    {
-        <input type="hidden" name="selectedProducts" value="@product.MaSanPham" />
-    }
+            <ol class="list-group" type="1">
+                @foreach (var product in Model)
+                {
+                    <li class="list-group-item"><p style="font-size:large;font-weight:bold">@product.TenSanPham</p></li>
+                }
+            </ol>
 
-    <button type="submit" class="btn btn-danger">Xóa</button>
-    <a href="@Url.Action("Products")" class="btn btn-secondary">Hủy bỏ</a>
-</form>
+            @foreach (var product in Model)
+            {
+                <input type="hidden" name="selectedProducts" value="@product.MaSanPham" />
+            }
+
+            <button type="submit" class="btn btn-danger mt-3 mr-3">Xóa</button>
+            <a href="/NhanVien/Orders" class="btn btn-secondary mt-3">Hủy bỏ</a>
+        </form>
+
+    </div>
+</div>

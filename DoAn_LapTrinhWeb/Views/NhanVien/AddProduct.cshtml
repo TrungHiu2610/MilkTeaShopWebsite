@@ -1,8 +1,15 @@
-﻿@model DoAn_LapTrinhWeb.Models.SanPham
+﻿@using DoAn_LapTrinhWeb.Models;
+@model SanPham
 
 @{
     ViewBag.Title = "AddProduct";
     Layout = "~/Views/Shared/_LayoutPageNhanVien.cshtml";
+
+    List<Size> lstSize = null;
+    if (ViewBag.lstSize != null)
+    {
+        lstSize = ViewBag.lstSize as List<Size>;
+    }
 }
 
 @if (!string.IsNullOrEmpty(ViewBag.Message as string))
@@ -20,72 +27,143 @@
         <img src="~/Content/Image/Next.svg" />
     </div>
     <div class="locations">
-        <span style="color: #C58A66">Thêm Sản Phẩm</span>
+        <a href="/Home/Products/" style="text-decoration:none; color: #808080">Sản Phẩm</a>
+    </div>
+    <div class="locations">
+        <img src="~/Content/Image/Next.svg" />
+    </div>
+    <div class="locations">
+        <span style="color: #C58A66">Thêm sản phẩm</span>
     </div>
 </div>
+
 
 <div class="container">
     <form method="post" action="/NhanVien/AddProduct" enctype="multipart/form-data">
         <fieldset>
-            <div class="form-group">
-                <label>Loại</label>
-                @Html.DropDownList("MaLoaiSP", (SelectList)ViewBag.DanhMucLoai, "Chọn loại sản phẩm", new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.MaLoaiSP, "", new { @class = "text-danger" })
-            </div>
-
-            <div class="form-group">
-                <label>Tên</label>
-                <input type="text" id="TenSanPham" name="TenSanPham" class="form-control" />
-                @Html.ValidationMessageFor(model => model.TenSanPham, "", new { @class = "text-danger" })
-            </div>
-
-            <div class="form-group">
-                <label>Giá</label>
-                <input type="text" id="Gia" name="Gia" class="form-control" />
-                @Html.ValidationMessageFor(model => model.Gia, "", new { @class = "text-danger" })
-            </div>
-
-            <div class="form-group">
-                <label>Mô Tả</label>
-                <input type="text" id="MoTa" name="MoTa" class="form-control" />
-                @Html.ValidationMessageFor(model => model.MoTa, "", new { @class = "text-danger" })
-            </div>
-
-            <div class="form-group">
-                <label>Hình Ảnh</label>
-                <input type="file" name="fileProductImg" class="form-control" />
-            </div>
-
-            <div class="form-group">
-                <label>Trạng Thái</label>
-                <div>
-                    <input type="radio" name="TrangThai" value="true" />
-                    <label>Đang bán</label>
-                </div>
-                <div>
-                    <input type="radio" name="TrangThai" value="false" />
-                    <label>Ngừng bán</label>
-                </div>
-                @Html.ValidationMessageFor(model => model.TrangThai, "", new { @class = "text-danger" })
-            </div>
-
-            <div class="form-group">
-                <label>Số Lượng</label>
-                <input type="number" id="SoLuong" name="SoLuong" class="form-control" />
-                @Html.ValidationMessageFor(model => model.SoLuong, "", new { @class = "text-danger" })
-            </div>
-
-
-            <div>
-                <input type="radio" name="action" value="ThemTiep" checked />
-                <label>Thêm tiếp</label>
-                <input type="radio" name="action" value="QuayLaiDanhSach" />
-                <label>Quay lại danh sách</label>
-            </div>
-
-            <div class="form-group">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Loại sản phẩm</th>
+                        <td>
+                            @Html.DropDownList("MaLoaiSP", (SelectList)ViewBag.DanhMucLoai, "Chọn loại sản phẩm", new { @class = "form-select" })
+                            @Html.ValidationMessageFor(model => model.MaLoaiSP, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Size</th>
+                        <td>
+                            @if (lstSize != null && lstSize.Count > 0)
+                            {
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Size</th>
+                                            <th>Giá thêm</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var size in lstSize)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="size_@size.MaSize" name="SelectedSizes" value="@size.MaSize" onclick="toggleInput(this, '@size.MaSize')" />
+                                                        <label class="form-check-label" for="size_@size.MaSize">@size.TenSize</label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control form-control-sm" style="display: none;" id="price_@size.MaSize" name="GiaThem_@size.MaSize" placeholder="Giá thêm" />
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <p>Không có size.</p>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Tên sản phẩm</th>
+                        <td>
+                            <input type="text" id="TenSanPham" name="TenSanPham" class="form-control" />
+                            @Html.ValidationMessageFor(model => model.TenSanPham, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Giá</th>
+                        <td>
+                            <input type="text" id="Gia" name="Gia" class="form-control" />
+                            @Html.ValidationMessageFor(model => model.Gia, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Mô tả</th>
+                        <td>
+                            <input type="text" id="MoTa" name="MoTa" class="form-control" />
+                            @Html.ValidationMessageFor(model => model.MoTa, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Hình ảnh</th>
+                        <td>
+                            <input type="file" name="fileProductImg" class="form-control" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Trạng thái</th>
+                        <td>
+                            <div class="form-check">
+                                <input type="radio" name="TrangThai" value="true" id="TrangThai_True" />
+                                <label class="form-check-label" for="TrangThai_True">Đang bán</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" name="TrangThai" value="false" id="TrangThai_False" />
+                                <label class="form-check-label" for="TrangThai_False">Ngừng bán</label>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.TrangThai, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Số lượng</th>
+                        <td>
+                            <input type="number" id="SoLuong" name="SoLuong" class="form-control" />
+                            @Html.ValidationMessageFor(model => model.SoLuong, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Hành động</th>
+                        <td>
+                            <div class="form-check">
+                                <input type="radio" name="action" value="ThemTiep" id="ThemTiep" checked />
+                                <label for="ThemTiep">Thêm tiếp</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" name="action" value="QuayLaiDanhSach"/>
+                                <label>Quay lại danh sách</label>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="text-center mt-3">
                 <input type="submit" value="Lưu" class="btn btn-success" />
             </div>
         </fieldset>
     </form>
 </div>
+
+<script>
+    function toggleInput(checkbox, sizeId) {
+        const priceInput = document.getElementById('price_' + sizeId);
+        if (checkbox.checked) {
+            priceInput.style.display = 'inline-block';
+        } else {
+            priceInput.style.display = 'none';
+            priceInput.value = '';
+        }
+    }
+</script>

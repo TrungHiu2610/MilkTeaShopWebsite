@@ -147,10 +147,13 @@
       <DependentUpon>DB_QL_CuaHangTraSua.dbml</DependentUpon>
     </Compile>
     <Compile Include="Models\GioHangModel.cs" />
+    <Compile Include="Models\ThongTinSize.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\ProgressBarOrders.css" />
     <Content Include="Content\Image\default_product.svg" />
+    <Content Include="Content\Main_ForOrders.css" />
     <Content Include="Content\Pagination.css" />
     <Content Include="Content\bootstrap\css\bootstrap-grid.css" />
     <Content Include="Content\bootstrap\css\bootstrap-grid.min.css" />
@@ -327,6 +330,12 @@
     <Content Include="Views\NhanVien\AddProduct.cshtml" />
     <Content Include="Views\NhanVien\EditProduct.cshtml" />
     <Content Include="Views\NhanVien\ConfirmDelete.cshtml" />
+    <Content Include="Views\NhanVien\Orders.cshtml" />
+    <Content Include="Views\NhanVien\OrderDetail.cshtml" />
+    <Content Include="Views\Shared\_LayoutPageNhanVien_DonHang.cshtml" />
+    <Content Include="Views\Home\HistoryOrders.cshtml" />
+    <Content Include="Views\Home\OrderDetail.cshtml" />
+    <Content Include="Views\Shared\KhachHang_DonHang.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

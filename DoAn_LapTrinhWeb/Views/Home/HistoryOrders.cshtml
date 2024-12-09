@@ -1,0 +1,112 @@
+﻿@using DoAn_LapTrinhWeb.Models;
+@using PagedList.Mvc
+@model PagedList.IPagedList<HoaDonBanHang>
+
+@{
+    ViewBag.Title = "HistoryOrders";
+    Layout = "~/Views/Shared/KhachHang_DonHang.cshtml";
+
+    List<ChiTietHoaDonBanHang> lstCTHD = null;
+    if (ViewBag.lstCTHD != null)
+    {
+        lstCTHD = ViewBag.lstCTHD as List<ChiTietHoaDonBanHang>;
+    }
+}
+
+<div class="breadcrumbs">
+    <div class="locations" style="margin-left: 15%;">
+        <a href="@Url.Action("Index", "Home")"><img src="~/Content/Image/home.svg" /></a>
+    </div>
+    <div class="locations">
+        <img src="~/Content/Image/Next.svg" />
+    </div>
+    <div class="locations">
+        <a href="#" style="text-decoration:none; color: #808080">Tài Khoản</a>
+    </div>
+    <div class="locations">
+        <img src="~/Content/Image/Next.svg" />
+    </div>
+    <div class="locations">
+        <span style="color: #C58A66">Lịch Sử Đơn Hàng</span>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <h5>Lịch Sử Đơn Hàng</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>MÃ ĐƠN</th>
+                    <th>NGÀY ĐẶT</th>
+                    <th>TỔNG</th>
+                    <th>TRẠNG THÁI</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (HoaDonBanHang hd in Model)
+                {
+                    <tr>
+                        <td>
+                            @hd.MaHoaDon
+                        </td>
+                        <td>
+                            @hd.NgayLap.Day . @hd.NgayLap.Month . @hd.NgayLap.Year
+                        </td>
+                        <td>
+                            @hd.TongTien.ToString("N0") VNĐ (@lstCTHD.Where(x => x.MaHoaDon == hd.MaHoaDon).Sum(x => x.SoLuong) Món)
+                        </td>
+                        <td>
+                            @if (hd.TrangThai == "Chờ xác nhận")
+                            {
+                                <span class="btn" style="background-color: #F2BDB4;width:80%">Chờ xác nhận</span>
+                            }
+                            else if (hd.TrangThai == "Đang xử lý")
+                            {
+                                <span class="btn" style="background-color: #FFEC7E; width: 80%">Đang xử lý</span>
+                            }
+                            else if (hd.TrangThai == "Đang giao")
+                            {
+                                <span class="btn" style="background-color: #C6E9FF; width: 80%">Đang giao</span>
+                            }
+                            else if (hd.TrangThai == "Đã hoàn thành")
+                            {
+                                <span class="btn" style="background-color: #9AF1A7; width: 80%">Hoàn thành</span>
+                            }
+                            else if (hd.TrangThai == "Đã từ chối")
+                            {
+                                <span class="btn" style="background-color: #D96166; width: 80%">Đã từ chối</span>
+                            }
+                            else
+                            {
+                                <span class="btn" style="background-color: gray; width: 80%">Không rõ</span>
+                            }
+                        </td>
+                        <td>
+                            <a href="/Home/OrderDetail/@hd.MaHoaDon" style="color: #994B22">Xem Chi Tiết</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="pagination-container">
+            @Html.PagedListPager(
+                Model,
+                page => Url.Action("Products", new { page }),
+                new PagedListRenderOptions
+                {
+                    DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                    DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                    DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                    DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                    DisplayPageCountAndCurrentLocation = false,
+                    MaximumPageNumbersToDisplay = 5,
+                    DisplayEllipsesWhenNotShowingAllPageNumbers = true,
+                    UlElementClasses = new[] { "pagination", "justify-content-center" },
+                    LiElementClasses = new[] { "page-item" }
+                }
+            )
+        </div>
+    </div>
+</div>

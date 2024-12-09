@@ -31,60 +31,72 @@
     </div>
 </div>
 <div class="container">
-    <div class="product-detail-img">
-        <img src="~/Content/HinhAnh/@Model.HinhAnh" alt="@Model.HinhAnh" />
-    </div>
-    <div class="product-detail-info">
-        <span class="product-name">
-            @Model.TenSanPham
-        </span>
-        <div class="rating-n-sku">
-            <div class="rating">
-                <img src="~/Content/Image/Rating.svg" alt="Alternate Text" />
-            </div>
-            <span style="font-family:'fz poppins-medium';font-size:14px;color: #B3B3B3;margin-right:12px">•</span>
-            <div class="sku">
-                <span style="font-weight:600; color: #333">MSP:</span> @Model.MaSanPham
-            </div>
+    <form method="post" action="/Home/AddToCart">
+        <input type="hidden" value="@Model.MaSanPham" name="MaSP" />
+        <input type="hidden" value="@Model.MaLoaiSP" name="MaLoaiSP" />
+        <div class="product-detail-img">
+            <img src="~/Content/HinhAnh/@Model.HinhAnh" alt="@Model.HinhAnh" />
         </div>
-        <div class="price">
-            @string.Format("{0:N0} VND", Model.Gia)
-        </div>
-        <div class="divider"></div>
-        <div class="size-picking">
-            <p>Chọn Size:</p>
-            @foreach (var size in ViewBag.lst_size)
-            {
-                <div class="btn_size">
-                    @size.Size.TenSize + @string.Format("{0:N0} đ", size.GiaThem)
+        <div class="product-detail-info">
+            <span class="product-name">
+                @Model.TenSanPham
+            </span>
+            <div class="rating-n-sku">
+                <div class="rating">
+                    <img src="~/Content/Image/Rating.svg" alt="Alternate Text" />
                 </div>
-            }
-        </div>
-        <div class="size-picking">
-            <p>Chọn Topping:</p>
-            @foreach (var topping in ViewBag.lst_topping)
-            {
-                if (!string.IsNullOrWhiteSpace(topping.TenTopping))
+                <span style="font-family:'fz poppins-medium';font-size:14px;color: #B3B3B3;margin-right:12px">•</span>
+                <div class="sku">
+                    <span style="font-weight:600; color: #333">MSP:</span> @Model.MaSanPham
+                </div>
+            </div>
+            <div class="price">
+                @string.Format("{0:N0} VND", Model.Gia)
+            </div>
+            <div class="divider"></div>
+            <div class="size-picking">
+                <p>Chọn Size:</p>
+                @foreach (var size in ViewBag.lst_size)
                 {
                     <div class="btn_size">
-                        @topping.TenTopping
+                        <label>
+                            <input type="radio" name="maSize" value="@size.MaSize" />
+                            @size.TenSize + @string.Format("{0:N0} đ", size.GiaThem)
+                        </label>
                     </div>
                 }
-            }
-        </div>
-        <div class="add-to-cart">
-            <div class="cart-quantity">
-                <img src="~/Content/Image/minus.svg" />
-                <input type="text" value="1" />
-                <img src="~/Content/Image/plus.svg" />
             </div>
-            <div class="add-to-cart_button">
-                Thêm vào giỏ hàng
-                <img src="~/Content/Image/Cart_Detail.svg" />
+            <div class="size-picking">
+                <p>Chọn Topping:</p>
+                @foreach (var topping in ViewBag.lst_topping)
+                {
+                    if (!string.IsNullOrWhiteSpace(topping.TenTopping))
+                    {
+                        <div class="btn_size">
+                            <label>
+                                <input type="checkbox" name="lstMaTopping" value="@topping.MaTopping" />
+                                @topping.TenTopping
+                            </label>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="add-to-cart">
+                <div class="cart-quantity">
+                    <img src="~/Content/Image/minus.svg" />
+                    <input type="text" value="1" name="SoLuong"/>
+                    <img src="~/Content/Image/plus.svg" />
+                </div>
+                <div class="add-to-cart_button">
+                    <button type="submit" class="add-to-cart_button">
+                        Thêm vào giỏ hàng
+                        <img src="~/Content/Image/Cart_Detail.svg" />
+                    </button>
+                </div>
+            </div>
+            <div class="product-detail-type">
+                <span style="font-weight:600; color: #333">Loại sản phẩm:</span> @Model.LoaiSanPham.TenLoaiSP
             </div>
         </div>
-        <div class="product-detail-type">
-            <span style="font-weight:600; color: #333">Loại sản phẩm:</span> @Model.LoaiSanPham.TenLoaiSP
-        </div>
-    </div>
+    </form>
 </div>

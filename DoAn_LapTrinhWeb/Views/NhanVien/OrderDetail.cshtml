@@ -1,0 +1,253 @@
+﻿@using DoAn_LapTrinhWeb.Models;
+
+
+@model HoaDonBanHang
+
+@{
+    ViewBag.Title = "OrderDetail";
+    Layout = "~/Views/Shared/_LayoutPageNhanVien_DonHang.cshtml";
+
+    NguoiDung user = null;
+    if (Session["acc"] != null)
+    {
+        user = Session["acc"] as NguoiDung;
+
+    }
+    List<ChiTietHoaDonBanHang> lstCTHD = null;
+    if (ViewBag.lstCTHD != null)
+    {
+        lstCTHD = ViewBag.lstCTHD as List<ChiTietHoaDonBanHang>;
+    }
+
+    List<ToppingDonHang> lstTp = null;
+    decimal giaTopping = 0;
+    if (ViewBag.lstTopping != null)
+    {
+        lstTp = ViewBag.lstTopping as List<ToppingDonHang>;
+    }
+}
+
+<div class="breadcrumbs">
+    <div class="locations" style="margin-left: 15%;">
+        <a href="@Url.Action("Index", "Home")"><img src="~/Content/Image/home.svg" /></a>
+    </div>
+    <div class="locations">
+        <img src="~/Content/Image/Next.svg" />
+    </div>
+    <div class="locations">
+        <a href="/NhanVien/Orders/" style="text-decoration:none; color: #808080">Đơn Hàng</a>
+    </div>
+    <div class="locations">
+        <img src="~/Content/Image/Next.svg" />
+    </div>
+    <div class="locations">
+        <span style="color: #C58A66">Chi tiết đơn hàng</span>
+    </div>
+</div>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["Message"]
+    </div>
+}
+
+<div class="container">
+    <form method="post" action="/NhanVien/ConfirmOrder">
+        <div class="row mb-3">
+            <div class="col-6 d-flex mt-3 mb-3" style="align-items:center">
+                <h4>Chi Tiết Đơn Hàng</h4>
+                <p>• @Model.NgayLap.Day Tháng @Model.NgayLap.Month, @Model.NgayLap.Year </p>
+                @if (lstCTHD != null)
+                {
+                    <p>
+                        • @lstCTHD.Sum(x => x.SoLuong) Sản phẩm
+                    </p>
+                }
+                else
+                {
+                    <p>
+                        • 0 Sản phẩm
+                    </p>
+                }
+            </div>
+            <div class="col-6 text-right">
+                @if (Model.TrangThai == "Chờ xác nhận")
+                {
+                    <span style="background-color: #F2BDB4; font-size:large">Chờ xác nhận</span>
+                }
+                else if (Model.TrangThai == "Đang xử lý")
+                {
+                    <span style="background-color: #FFEC7E; font-size: large">Đang chuẩn bị</span>
+                }
+                else if (Model.TrangThai == "Đang giao")
+                {
+                    <span style="background-color: #C6E9FF; font-size: large">Đang giao</span>
+                }
+                else if (Model.TrangThai == "Đã hoàn thành")
+                {
+                    <span style="background-color: #9AF1A7; font-size: large">Đã giao</span>
+                }
+                else if (Model.TrangThai == "Đã từ chối")
+                {
+                    <span style="background-color: #D96166; font-size: large">Đã từ chối</span>
+                }
+                else
+                {
+                    <span style="background-color: gray">Không rõ</span>
+                }
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-8 mt-3 mb-3">
+                <div class="row">
+                    <div class="card col-6">
+                        <div class="card-title text-left mt-2 mb-2" style="color:lightgray">ĐỊA CHỈ TÀI KHOẢN</div>
+                        <div class="card-body text-left">
+                            <p><strong>@Model.NguoiDung.HoTen</strong></p>
+                            <p>@Model.NguoiDung.DiaChi</p> <br />
+                            <label>SỐ ĐIỆN THOẠI</label> <br />
+                            <p>@Model.NguoiDung.SoDienThoai</p>
+                        </div>
+                    </div>
+
+                    <div class="card col-6">
+                        <div class="card-title text-left mt-2 mb-2" style="color:lightgray">ĐỊA CHỈ GIAO HÀNG</div>
+                        <div class="card-body text-left">
+                            <p><strong>@Model.NguoiDung.HoTen</strong></p>
+                            <p>@Model.NguoiDung.DiaChi</p> <br />
+                            <label>SỐ ĐIỆN THOẠI</label> <br />
+                            <p>@Model.NguoiDung.SoDienThoai</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 mt-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <p><strong>Mã Đơn:</strong> #@Model.MaHoaDon</p>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>Thanh Toán:</strong> @Model.PhuongThucThanhToan</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            Tổng đơn hàng
+                                        </td>
+                                        <td>
+                                            @ViewBag.tongDonHang.ToString("N0") VNĐ
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Giảm giá
+                                        </td>
+                                        <td>
+                                            <p>@Model.GiamGia.PhanTramGiam%</p>
+                                            <p>-@((Model.GiamGia.PhanTramGiam/100* ViewBag.tongDonHang).ToString("N0")) VNĐ</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Phí giao hàng
+                                        </td>
+                                        <td>
+                                            0 VNĐ
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Tổng tiền
+                                        </td>
+                                        <td>
+                                            <p style="color:#881B1F;font-weight:bold; font-size:large">@Model.TongTien.ToString("N0") VNĐ</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table">
+                <thead style="background-color:lightgray">
+                    <tr>
+                        <th>Mã</th>
+                        <th>Sản Phẩm</th>
+                        <th>Size</th>
+                        <th>Topping</th>
+                        <th>Giá sản phẩm</th>
+                        <th>Số Lượng</th>
+                        <th>Giá topping</th>
+                        <th>Tổng tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (ChiTietHoaDonBanHang cthd in lstCTHD)
+                    {
+                        giaTopping = 0;
+                        <tr>
+                            <td>
+                                @cthd.MaSanPham
+                            </td>
+                            <td>
+                                <div class="d-inline">
+                                    <img src="~/Content/HinhAnh/@cthd.SanPham.HinhAnh" style="width:70px;height:70px" />
+                                    <p>@cthd.SanPham.TenSanPham</p>
+                                </div>
+                            </td>
+                            <td>
+                                @cthd.SanPham.Size.TenSize
+                            </td>
+                            <td>
+                                <ul>
+                                    @foreach (ToppingDonHang tp in lstTp)
+                                    {
+                                        if (tp.MaHoaDon == cthd.MaHoaDon && tp.MaSanPham == cthd.MaSanPham && tp.MaSize == cthd.MaSize)
+                                        {
+                                            <li>
+                                                @tp.Topping.TenTopping
+                                            </li>
+                                            giaTopping += tp.Topping.Gia;
+                                        }
+                                    }
+                                </ul>
+                            </td>
+                            <td>
+                                @cthd.Gia.ToString("N0")
+                            </td>
+                            <td>
+                                @cthd.SoLuong
+                            </td>
+                            <td>
+                                @giaTopping.ToString("N0")
+                            </td>
+                            <td>
+                                @((cthd.Gia * cthd.SoLuong + giaTopping).ToString("N0")) VNĐ
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (Model.TrangThai == "Chờ xác nhận")
+        {
+            <div class="row mt-3 text-left">
+                <input type="hidden" value="@Model.MaHoaDon" name="maHD" />
+                <input type="hidden" value="@user.MaNguoiDung" name="maNV" />
+                <button type="submit" name="action" value="confirm" class="btn btn-success mr-3">Xác nhận</button>
+                <button type="submit" name="action" value="reject" class="btn btn-danger mr-3">Từ chối</button>
+            </div>
+        }
+    </form>
+</div>
+
+

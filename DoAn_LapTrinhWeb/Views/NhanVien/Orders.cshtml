@@ -1,0 +1,168 @@
+﻿@using DoAn_LapTrinhWeb.Models;
+@using PagedList.Mvc
+@model PagedList.IPagedList<HoaDonBanHang>
+
+@{
+    ViewBag.Title = "Orders";
+    Layout = "~/Views/Shared/_LayoutPageNhanVien.cshtml";
+
+    List<ChiTietHoaDonBanHang> lstCTHD = null;
+    if (ViewBag.lstCTHD != null)
+    {
+        lstCTHD = ViewBag.lstCTHD as List<ChiTietHoaDonBanHang>;
+    }
+}
+
+
+<div class="breadcrumbs">
+    <div class="locations" style="margin-left: 15%;">
+        <a href="@Url.Action("Index", "Home")"><img src="~/Content/Image/home.svg" /></a>
+    </div>
+    <div class="locations">
+        <img src="~/Content/Image/Next.svg" />
+    </div>
+    <div class="locations">
+        <a href="/NhanVien/Orders/" style="text-decoration:none; color: #808080">Đơn Hàng</a>
+    </div>
+    <div class="locations">
+        <img src="~/Content/Image/Next.svg" />
+    </div>
+    <div class="locations">
+        <span style="color: #C58A66">Danh sách đơn hàng</span>
+    </div>
+</div>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["Message"]
+    </div>
+}
+
+<div class="container justify-content-center">
+    <!-- Form tìm kiếm -->
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="form-inline">
+                <form method="post" action="/NhanVien/Orders">
+                    <input type="text" name="maKH" placeholder="Mã khách hàng" class="form-control mr-3" value="@ViewBag.maKH"/>
+                    <input type="text" name="maNV" placeholder="Mã nhân viên" class="form-control mr-3" value="@ViewBag.maNV"/>
+                    <label class="form-control mr-1" style="font-weight:bold; border:none">Từ ngày</label>
+                    <input type="date" name="ngayBD" class="form-control mr-3" value="@ViewBag.ngayBD"/>
+                    <label class="form-control mr-1" style="font-weight: bold; border: none">Đến ngày</label>
+                    <input type="date" name="ngayKT" class="form-control mr-3" value="@ViewBag.ngayKT"/>
+                    <input type="submit" value="Lọc" class="btn bg-success mr-3" />
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form thao tác -->
+    <form method="post" action="/NhanVien/HandleAction">
+
+        <!-- Danh sách sản phẩm -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <table class="table table-bordered">
+                    <thead style="background-color: gray; color: white;">
+                        <tr>
+                            <td>Mã đơn hàng</td>
+                            <td>Mã khách hàng</td>
+                            <td>Mã nhân viên</td>
+                            <td>Số lượng</td>
+                            <td>Tổng tiền</td>
+                            <td>Ngày lập</td>
+                            <td>Trạng thái</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (HoaDonBanHang hd in Model)
+                        {
+                            <tr class="text-center">
+                                <td>
+                                    @hd.MaHoaDon
+                                </td>
+                                <td>
+                                    @hd.MaKH
+                                </td>
+                                <td>
+                                    @if (hd.MaNV == null)
+                                    {
+                                        <p style="color:red">Chưa xác định</p>
+                                    }
+                                    else
+                                    {
+                                        <p>@hd.MaNV</p>
+                                    }
+                                </td>
+                                <td>
+                                    @if (lstCTHD != null)
+                                    {
+                                        <p>@lstCTHD.Where(x => x.MaHoaDon == hd.MaHoaDon).Sum(x => x.SoLuong)</p>
+                                    }
+                                    else
+                                    {
+                                        <p>0</p>
+                                    }
+                                </td>
+                                <td>
+                                    @hd.TongTien.ToString("N0")
+                                </td>
+                                <td>
+                                    @hd.NgayLap
+                                </td>
+                                <td>
+                                    <a  style="color:black;" href="/NhanVien/OrderDetail/?maHD=@hd.MaHoaDon">
+                                        @if (hd.TrangThai == "Chờ xác nhận")
+                                        {
+                                            <span class="btn" style="background-color: #F2BDB4;width:80%">Chờ xác nhận</span>
+                                        }
+                                        else if (hd.TrangThai == "Đang xử lý")
+                                        {
+                                            <span class="btn" style="background-color: #FFEC7E; width: 80%">Đang chuẩn bị</span>
+                                        }
+                                        else if (hd.TrangThai == "Đang giao")
+                                        {
+                                            <span class="btn" style="background-color: #C6E9FF; width: 80%">Đang giao</span>
+                                        }
+                                        else if (hd.TrangThai == "Đã hoàn thành")
+                                        {
+                                            <span class="btn" style="background-color: #9AF1A7; width: 80%">Đã giao</span>
+                                        }
+                                        else if (hd.TrangThai == "Đã từ chối")
+                                        {
+                                            <span class="btn" style="background-color: #D96166; width: 80%">Đã từ chối</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="btn" style="background-color: gray; width: 80%">Không rõ</span>
+                                        }
+                                                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="pagination-container">
+                    @Html.PagedListPager(
+                        Model,
+                        page => Url.Action("Products", new { page }),
+                        new PagedListRenderOptions
+                        {
+                            DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                            DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                            DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                            DisplayPageCountAndCurrentLocation = false,
+                            MaximumPageNumbersToDisplay = 5,
+                            DisplayEllipsesWhenNotShowingAllPageNumbers = true,
+                            UlElementClasses = new[] { "pagination", "justify-content-center" },
+                            LiElementClasses = new[] { "page-item" }
+                        }
+                    )
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>

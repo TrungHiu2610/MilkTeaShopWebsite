@@ -6,7 +6,16 @@
     <link rel="stylesheet" href="~/Content/ViewCart.css" />
 
     GioHangModel cart = (Session["gh"] == null) ? null : new GioHangModel((GioHang)Session["gh"]);
+
+    List<ToppingDonHang> lstTp = null;
+    decimal giaTopping = 0;
+    if (ViewBag.lstTopping != null)
+    {
+        lstTp = ViewBag.lstTopping as List<ToppingDonHang>;
+    }
+
 }
+
 <div class="breadcrumbs">
     <div class="locations" style="margin-left: 15%;">
         <a href="@Url.Action("Index", "Home")"><img src="~/Content/Image/home.svg" /></a>
@@ -29,20 +38,23 @@
                     <tr>
                         <th>SẢN PHẨM</th>
                         <th>GIÁ</th>
+                        <th>TOPPING</th>
+                        <th>GIÁ TOPPING</th>
                         <th>SỐ LƯỢNG</th>
-                        <th colspan="2">TỔNG</th>
+                        <th colspan="3">TỔNG</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                     {
+                        giaTopping = 0;
                         <tr>
                             <td>
                                 <div class="product-info">
                                     <img src="~/Content/HinhAnh/@item.SanPham.HinhAnh" />
                                     <span>
-                                        @item.SanPham.TenSanPham <br /> 
-                                        <span style="color: #808080">Size @item.Size.TenSize, @item.Topping.TenTopping </span>
+                                        @item.SanPham.TenSanPham <br />
+                                        <span style="color: #808080">Size @item.Size.TenSize</span>
                                     </span>
                                 </div>
                             </td>
@@ -50,17 +62,52 @@
                                 @string.Format("{0:N0}", item.SanPham.Gia)
                             </td>
                             <td>
+                                <ul>
+                                    @foreach (ToppingDonHang tp in lstTp)
+                                    {
+                                        if (tp.MaGioHang == item.MaGioHang && tp.MaSanPham == item.MaSanPham && tp.MaSize == item.MaSize)
+                                        {
+                                            <li>
+                                                @tp.Topping.TenTopping
+                                            </li>
+                                            giaTopping += tp.Topping.Gia;
+                                        }
+                                    }
+                                </ul>
+                            </td>
+                            <td>
+                                @giaTopping.ToString("N0")
+                            </td>
+                            <td>
                                 <div class="quantity">
-                                    <a href="#" id="minus"><img src="~/Content/Image/minus.svg" /></a>
-                                    <input type="number" class="input-box" value="@item.SoLuong" id="quantity" />
-                                    <a href="#" id="plus"><img src="~/Content/Image/plus.svg" /></a>
+                                    <a href="#" id="minus" onclick="changeQuantity(-1, this)"><img src="~/Content/Image/minus.svg" /></a>
+                                    <input form="form-@item.MaSanPham" type="number" class="input-box" value="@item.SoLuong" id="quantity" name="soLuong"/>
+                                    <a href="#" id="plus" onclick="changeQuantity(1, this)"><img src="~/Content/Image/plus.svg" /></a>
                                 </div>
                             </td>
                             <td>
                                 @string.Format("{0:N0}", item.ThanhTien)
                             </td>
                             <td>
-                                <img src="~/Content/Image/cancel_product.svg" />
+                                <form action="/Home/UpdateCart" method="post" id="form-@item.MaSanPham">
+                                    <input type="hidden" value="@item.MaSanPham" name="maSP" />
+                                    <input type="hidden" value="@item.MaSize" name="maSize" />
+                                    <input type="hidden" value="@item.MaGioHang" name="maGH" />
+                                    <input type="hidden" value="@giaTopping" name="giaTopping" />
+                                    <input type="submit" value="Lưu" class="btn bg-primary" />
+                                </form>
+                            </td>
+                            <td>
+                                <form action="/Home/UpdateCart" method="post" id="form-@item.MaSanPham">
+                                    <input type="hidden" value="@item.MaSanPham" name="maSP" />
+                                    <input type="hidden" value="@item.MaSize" name="maSize" />
+                                    <input type="hidden" value="@item.MaGioHang" name="maGH" />
+                                    <input type="hidden" value="@giaTopping" name="giaTopping" />
+                                    <input type="hidden" value="0" name="soLuong" />
+                                    <button type="submit" class="btn-cancel">
+                                        <img src="~/Content/Image/cancel_product.svg" alt="Cancel" />
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     }
@@ -114,3 +161,17 @@
         </div>
     </div>
 </div>
+
+<script>
+    function changeQuantity(delta, element) {
+        const quantityInput = element.parentElement.querySelector("#quantity");
+
+        let currentValue = parseInt(quantityInput.value) || 0; 
+        currentValue += delta;
+        if (currentValue < 0) {
+            currentValue = 0;
+        }
+        quantityInput.value = currentValue;
+    }
+
+</script>

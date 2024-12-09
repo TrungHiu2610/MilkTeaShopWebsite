@@ -4,34 +4,33 @@
       <Column Name="MaGioHang" Type="System.String" DbType="Char(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="MaSanPham" Type="System.String" DbType="Char(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="SoLuong" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="MaSize" Type="System.String" DbType="Char(10)" CanBeNull="true" />
-      <Column Name="MaTopping" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MaSize" Type="System.String" DbType="Char(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="ThanhTien" Type="System.Decimal" DbType="Decimal(10,2)" CanBeNull="true" />
+      <Association Name="ChiTietGioHang_ToppingDonHang" Member="ToppingDonHangs" ThisKey="MaSanPham,MaSize,MaGioHang" OtherKey="MaSanPham,MaSize,MaGioHang" Type="ToppingDonHang" />
       <Association Name="GioHang_ChiTietGioHang" Member="GioHang" ThisKey="MaGioHang" OtherKey="MaGioHang" Type="GioHang" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
-      <Association Name="SanPham_ChiTietGioHang" Member="SanPham" ThisKey="MaSanPham" OtherKey="MaSanPham" Type="SanPham" IsForeignKey="true" />
+      <Association Name="SanPham_ChiTietGioHang" Member="SanPham" ThisKey="MaSanPham,MaSize" OtherKey="MaSanPham,MaSize" Type="SanPham" IsForeignKey="true" />
       <Association Name="Size_ChiTietGioHang" Member="Size" ThisKey="MaSize" OtherKey="MaSize" Type="Size" IsForeignKey="true" />
-      <Association Name="Topping_ChiTietGioHang" Member="Topping" ThisKey="MaTopping" OtherKey="MaTopping" Type="Topping" IsForeignKey="true" />
     </Type>
   </Table>
-  <Table Name="dbo.ToppingDonHang" Member="ToppingDonHangs">
-    <Type Name="ToppingDonHang">
-      <Column Name="MaToppingDonHang" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="MaSanPham" Type="System.String" DbType="Char(10) NOT NULL" CanBeNull="false" />
-      <Column Name="MaHoaDon" Type="System.String" DbType="Char(10) NOT NULL" CanBeNull="false" />
-      <Column Name="MaTopping" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Association Name="ChiTietHoaDonBanHang_ToppingDonHang" Member="ChiTietHoaDonBanHang" ThisKey="MaSanPham,MaHoaDon" OtherKey="MaSanPham,MaHoaDon" Type="ChiTietHoaDonBanHang" IsForeignKey="true" />
-      <Association Name="Topping_ToppingDonHang" Member="Topping" ThisKey="MaTopping" OtherKey="MaTopping" Type="Topping" IsForeignKey="true" />
+  <Table Name="dbo.Topping" Member="Toppings">
+    <Type Name="Topping">
+      <Column Name="MaTopping" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TenTopping" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Gia" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TrangThai" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Association Name="Topping_ToppingDonHang" Member="ToppingDonHangs" ThisKey="MaTopping" OtherKey="MaTopping" Type="ToppingDonHang" />
     </Type>
   </Table>
   <Table Name="dbo.ChiTietHoaDonBanHang" Member="ChiTietHoaDonBanHangs">
     <Type Name="ChiTietHoaDonBanHang">
       <Column Name="MaSanPham" Type="System.String" DbType="Char(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="MaSize" Type="System.String" DbType="Char(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="MaHoaDon" Type="System.String" DbType="Char(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="SoLuong" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="Gia" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
-      <Association Name="ChiTietHoaDonBanHang_ToppingDonHang" Member="ToppingDonHangs" ThisKey="MaSanPham,MaHoaDon" OtherKey="MaSanPham,MaHoaDon" Type="ToppingDonHang" />
+      <Association Name="ChiTietHoaDonBanHang_ToppingDonHang" Member="ToppingDonHangs" ThisKey="MaSanPham,MaSize,MaHoaDon" OtherKey="MaSanPham,MaSize,MaHoaDon" Type="ToppingDonHang" />
       <Association Name="HoaDonBanHang_ChiTietHoaDonBanHang" Member="HoaDonBanHang" ThisKey="MaHoaDon" OtherKey="MaHoaDon" Type="HoaDonBanHang" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
-      <Association Name="SanPham_ChiTietHoaDonBanHang" Member="SanPham" ThisKey="MaSanPham" OtherKey="MaSanPham" Type="SanPham" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="SanPham_ChiTietHoaDonBanHang" Member="SanPham" ThisKey="MaSanPham,MaSize" OtherKey="MaSanPham,MaSize" Type="SanPham" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.GiamGia" Member="GiamGias">
@@ -58,15 +57,20 @@
   <Table Name="dbo.HoaDonBanHang" Member="HoaDonBanHangs">
     <Type Name="HoaDonBanHang">
       <Column Name="MaHoaDon" Type="System.String" DbType="Char(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="MaNguoiDung" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MaKH" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MaNV" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="NgayLap" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
       <Column Name="TongTien" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
       <Column Name="MaGG" Type="System.String" DbType="Char(10)" CanBeNull="true" />
       <Column Name="TrangThai" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="PhuongThucThanhToan" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="DiaChiGiaoHang" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="HoTenKH" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="SdtGiaoHang" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
       <Association Name="HoaDonBanHang_ChiTietHoaDonBanHang" Member="ChiTietHoaDonBanHangs" ThisKey="MaHoaDon" OtherKey="MaHoaDon" Type="ChiTietHoaDonBanHang" />
       <Association Name="GiamGia_HoaDonBanHang" Member="GiamGia" ThisKey="MaGG" OtherKey="MaGG" Type="GiamGia" IsForeignKey="true" DeleteRule="SET NULL" />
-      <Association Name="NguoiDung_HoaDonBanHang" Member="NguoiDung" ThisKey="MaNguoiDung" OtherKey="MaNguoiDung" Type="NguoiDung" IsForeignKey="true" />
+      <Association Name="NguoiDung_HoaDonBanHang" Member="NguoiDung" ThisKey="MaKH" OtherKey="MaNguoiDung" Type="NguoiDung" IsForeignKey="true" />
+      <Association Name="NguoiDung_HoaDonBanHang1" Member="NguoiDung1" ThisKey="MaNV" OtherKey="MaNguoiDung" Type="NguoiDung" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.LoaiSanPham" Member="LoaiSanPhams">
@@ -85,7 +89,8 @@
       <Column Name="MatKhau" Type="System.String" DbType="Char(50) NOT NULL" CanBeNull="false" />
       <Column Name="MaQuyen" Type="System.String" DbType="Char(10) NOT NULL" CanBeNull="false" />
       <Association Name="NguoiDung_GioHang" Member="GioHangs" ThisKey="MaNguoiDung" OtherKey="MaNguoiDung" Type="GioHang" />
-      <Association Name="NguoiDung_HoaDonBanHang" Member="HoaDonBanHangs" ThisKey="MaNguoiDung" OtherKey="MaNguoiDung" Type="HoaDonBanHang" />
+      <Association Name="NguoiDung_HoaDonBanHang" Member="HoaDonBanHangs" ThisKey="MaNguoiDung" OtherKey="MaKH" Type="HoaDonBanHang" />
+      <Association Name="NguoiDung_HoaDonBanHang1" Member="HoaDonBanHangs1" ThisKey="MaNguoiDung" OtherKey="MaNV" Type="HoaDonBanHang" />
       <Association Name="PhanQuyen_NguoiDung" Member="PhanQuyen" ThisKey="MaQuyen" OtherKey="MaQuyen" Type="PhanQuyen" IsForeignKey="true" />
     </Type>
   </Table>
@@ -96,18 +101,10 @@
       <Association Name="PhanQuyen_NguoiDung" Member="NguoiDungs" ThisKey="MaQuyen" OtherKey="MaQuyen" Type="NguoiDung" />
     </Type>
   </Table>
-  <Table Name="dbo.QuanLySP_Size" Member="QuanLySP_Sizes">
-    <Type Name="QuanLySP_Size">
-      <Column Name="MaSize" Type="System.String" DbType="Char(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="MaSanPham" Type="System.String" DbType="Char(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="GiaThem" Type="System.Decimal" DbType="Decimal(10,2)" CanBeNull="true" />
-      <Association Name="SanPham_QuanLySP_Size" Member="SanPham" ThisKey="MaSanPham" OtherKey="MaSanPham" Type="SanPham" IsForeignKey="true" />
-      <Association Name="Size_QuanLySP_Size" Member="Size" ThisKey="MaSize" OtherKey="MaSize" Type="Size" IsForeignKey="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.SanPham" Member="SanPhams">
     <Type Name="SanPham">
       <Column Name="MaSanPham" Type="System.String" DbType="Char(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="MaSize" Type="System.String" DbType="Char(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="MaLoaiSP" Type="System.String" DbType="Char(10)" CanBeNull="true" />
       <Column Name="TenSanPham" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
       <Column Name="Gia" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
@@ -115,10 +112,10 @@
       <Column Name="HinhAnh" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="TrangThai" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Column Name="SoLuong" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Association Name="SanPham_ChiTietGioHang" Member="ChiTietGioHangs" ThisKey="MaSanPham" OtherKey="MaSanPham" Type="ChiTietGioHang" />
-      <Association Name="SanPham_ChiTietHoaDonBanHang" Member="ChiTietHoaDonBanHangs" ThisKey="MaSanPham" OtherKey="MaSanPham" Type="ChiTietHoaDonBanHang" />
-      <Association Name="SanPham_QuanLySP_Size" Member="QuanLySP_Sizes" ThisKey="MaSanPham" OtherKey="MaSanPham" Type="QuanLySP_Size" />
+      <Association Name="SanPham_ChiTietGioHang" Member="ChiTietGioHangs" ThisKey="MaSanPham,MaSize" OtherKey="MaSanPham,MaSize" Type="ChiTietGioHang" />
+      <Association Name="SanPham_ChiTietHoaDonBanHang" Member="ChiTietHoaDonBanHangs" ThisKey="MaSanPham,MaSize" OtherKey="MaSanPham,MaSize" Type="ChiTietHoaDonBanHang" />
       <Association Name="LoaiSanPham_SanPham" Member="LoaiSanPham" ThisKey="MaLoaiSP" OtherKey="MaLoaiSP" Type="LoaiSanPham" IsForeignKey="true" />
+      <Association Name="Size_SanPham" Member="Size" ThisKey="MaSize" OtherKey="MaSize" Type="Size" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.Size" Member="Sizes">
@@ -126,17 +123,20 @@
       <Column Name="MaSize" Type="System.String" DbType="Char(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="TenSize" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Association Name="Size_ChiTietGioHang" Member="ChiTietGioHangs" ThisKey="MaSize" OtherKey="MaSize" Type="ChiTietGioHang" />
-      <Association Name="Size_QuanLySP_Size" Member="QuanLySP_Sizes" ThisKey="MaSize" OtherKey="MaSize" Type="QuanLySP_Size" />
+      <Association Name="Size_SanPham" Member="SanPhams" ThisKey="MaSize" OtherKey="MaSize" Type="SanPham" />
     </Type>
   </Table>
-  <Table Name="dbo.Topping" Member="Toppings">
-    <Type Name="Topping">
-      <Column Name="MaTopping" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="TenTopping" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="Gia" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
-      <Column Name="TrangThai" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Association Name="Topping_ChiTietGioHang" Member="ChiTietGioHangs" ThisKey="MaTopping" OtherKey="MaTopping" Type="ChiTietGioHang" />
-      <Association Name="Topping_ToppingDonHang" Member="ToppingDonHangs" ThisKey="MaTopping" OtherKey="MaTopping" Type="ToppingDonHang" />
+  <Table Name="dbo.ToppingDonHang" Member="ToppingDonHangs">
+    <Type Name="ToppingDonHang">
+      <Column Name="MaToppingDonHang" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="MaSanPham" Type="System.String" DbType="Char(10) NOT NULL" CanBeNull="false" />
+      <Column Name="MaSize" Type="System.String" DbType="Char(10) NOT NULL" CanBeNull="false" />
+      <Column Name="MaHoaDon" Type="System.String" DbType="Char(10)" CanBeNull="true" />
+      <Column Name="MaGioHang" Type="System.String" DbType="Char(10)" CanBeNull="true" />
+      <Column Name="MaTopping" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="ChiTietHoaDonBanHang_ToppingDonHang" Member="ChiTietHoaDonBanHang" ThisKey="MaSanPham,MaSize,MaHoaDon" OtherKey="MaSanPham,MaSize,MaHoaDon" Type="ChiTietHoaDonBanHang" IsForeignKey="true" />
+      <Association Name="ChiTietGioHang_ToppingDonHang" Member="ChiTietGioHang" ThisKey="MaSanPham,MaSize,MaGioHang" OtherKey="MaSanPham,MaSize,MaGioHang" Type="ChiTietGioHang" IsForeignKey="true" />
+      <Association Name="Topping_ToppingDonHang" Member="Topping" ThisKey="MaTopping" OtherKey="MaTopping" Type="Topping" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>
