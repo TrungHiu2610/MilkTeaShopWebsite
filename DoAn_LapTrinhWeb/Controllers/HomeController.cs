@@ -198,28 +198,47 @@ namespace DoAn_LapTrinhWeb.Controllers
             List<LoaiSanPham> lst_type = data.LoaiSanPhams.ToList();
             return PartialView(lst_type);
         }
-        public ActionResult Products(string id)
+        public ActionResult Products(string maLoai, string keyword, string sortType)
         {
-            List<SanPham> danhSachSP;
+            var danhSachSP = data.SanPhams
+                    .GroupBy(t => t.MaSanPham)
+                    .Select(g => g.FirstOrDefault());
 
-            if (id == null)
+            if (!string.IsNullOrEmpty(maLoai))
             {
-                danhSachSP = data.SanPhams
-                    .GroupBy(t => t.MaSanPham)
-                    .Select(g => g.FirstOrDefault())
-                    .ToList();
-            }
-            else
-            {
-                danhSachSP = data.SanPhams
-                    .Where(t => t.MaLoaiSP == id)
-                    .GroupBy(t => t.MaSanPham)
-                    .Select(g => g.FirstOrDefault())
-                    .ToList();
+                danhSachSP = danhSachSP.Where(t => t.MaLoaiSP == maLoai);
             }
 
-            ViewBag.MaLoaiSP = id;
-            return View(danhSachSP);
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                danhSachSP = danhSachSP.Where(t => t.TenSanPham.Contains(keyword));
+            }
+
+            if (!string.IsNullOrEmpty(sortType))
+            {
+                switch (sortType)
+                {
+                    case "MostPopular":
+                        {
+                            danhSachSP = danhSachSP.OrderByDescending(sp => sp.ChiTietHoaDonBanHangs.Count(ct => ct.MaSanPham == sp.MaSanPham));
+                        }
+                        break;
+                    case "AscPrice":
+                        {
+                            danhSachSP = danhSachSP.OrderBy(sp => sp.Gia);
+                        }
+                        break;
+                    case "DescPrice":
+                        {
+                            danhSachSP = danhSachSP.OrderByDescending(sp => sp.Gia);
+                        }
+                        break;
+                }
+            }
+
+            ViewBag.MaLoaiSP = maLoai;
+            List<SanPham> dssp = danhSachSP.ToList();
+            return View(dssp);
         }
 
         [HttpPost]
