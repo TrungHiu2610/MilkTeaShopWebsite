@@ -2,11 +2,10 @@
 @{
     ViewBag.Title = "ProductDetails";
     Layout = "~/Views/Shared/KhachHang.cshtml";
+    <link href="~/Content/Main.css" rel="stylesheet" />
     <link href="~/Content/ProductDetails.css" rel="stylesheet" />
 }
-@*@Html.Action("GetSize", "Home", new {idSanPham = Model.MaSanPham})
-
-    @Html.Action("GetTopping", "Home")*@
+@using DoAn_LapTrinhWeb.Models;
 <div class="breadcrumbs">
     <div class="locations" style="margin-left: 15%;">
         <a href="@Url.Action("Index", "Home")"><img src="~/Content/Image/home.svg" /></a>
@@ -31,61 +30,89 @@
     </div>
 </div>
 <div class="container">
-    <form method="post" action="/Home/AddToCart">
-        <input type="hidden" value="@Model.MaSanPham" name="MaSP" />
-        <input type="hidden" value="@Model.MaLoaiSP" name="MaLoaiSP" />
-        <div class="product-detail-img">
-            <img src="~/Content/HinhAnh/@Model.HinhAnh" alt="@Model.HinhAnh" />
+    <div class="product-detail-img">
+        <img src="~/Content/HinhAnh/@Model.HinhAnh" alt="@Model.HinhAnh" />
+    </div>
+    <div class="product-detail-info">
+        <span class="product-name">
+            @Model.TenSanPham
+        </span>
+        <div class="rating-n-sku">
+            <div class="rating">
+                <img src="~/Content/Image/Rating.svg" alt="Alternate Text" />
+            </div>
+            <span style="font-family:'fz poppins-medium';font-size:14px;color: #B3B3B3;margin-right:12px">•</span>
+            <div class="sku">
+                <span style="font-weight:600; color: #333">MSP:</span> @Model.MaSanPham
+            </div>
         </div>
-        <div class="product-detail-info">
-            <span class="product-name">
-                @Model.TenSanPham
-            </span>
-            <div class="rating-n-sku">
-                <div class="rating">
-                    <img src="~/Content/Image/Rating.svg" alt="Alternate Text" />
+        <div class="price">
+            @string.Format("{0:N0} VND", Model.Gia)
+        </div>
+
+        <div class="divider"></div>
+        <form method="post" action="/Home/AddToCart">
+            <input type="hidden" value="@Model.MaSanPham" name="MaSP" />
+            <input type="hidden" value="@Model.MaLoaiSP" name="MaLoaiSP" />
+            @*<div class="size-picking">
+            <p>Chọn Size:</p>
+            @foreach (var size in ViewBag.lst_size)
+            {
+                <div class="btn_size_radio">
+                    <label>
+                        <input type="radio" name="maSize" value="@size.MaSize" />
+                        @size.TenSize + @string.Format("{0:N0} đ", size.GiaThem)
+                    </label>
                 </div>
-                <span style="font-family:'fz poppins-medium';font-size:14px;color: #B3B3B3;margin-right:12px">•</span>
-                <div class="sku">
-                    <span style="font-weight:600; color: #333">MSP:</span> @Model.MaSanPham
-                </div>
-            </div>
-            <div class="price">
-                @string.Format("{0:N0} VND", Model.Gia)
-            </div>
-            <div class="divider"></div>
+            }
+        </div>
+        <div class="size-picking">
+            <p>Chọn Topping:</p>
+            @foreach (var topping in ViewBag.lst_topping)
+            {
+                if (!string.IsNullOrWhiteSpace(topping.TenTopping))
+                {
+                    <div class="btn_size">
+                        <label>
+                            <input type="checkbox" name="lstMaTopping" value="@topping.MaTopping" />
+                            @topping.TenTopping
+                        </label>
+                    </div>
+                }
+            }
+        </div>*@
+
             <div class="size-picking">
                 <p>Chọn Size:</p>
                 @foreach (var size in ViewBag.lst_size)
                 {
-                    <div class="btn_size">
-                        <label>
-                            <input type="radio" name="maSize" value="@size.MaSize" />
-                            @size.TenSize + @string.Format("{0:N0} đ", size.GiaThem)
-                        </label>
-                    </div>
+                    <label class="btn_size_radio">
+                        <input type="radio" name="maSize" value="@size.MaSize" hidden />
+                        <span>@size.TenSize + @string.Format("{0:N0} đ", size.GiaThem)</span>
+                    </label>
                 }
             </div>
+
             <div class="size-picking">
                 <p>Chọn Topping:</p>
                 @foreach (var topping in ViewBag.lst_topping)
                 {
                     if (!string.IsNullOrWhiteSpace(topping.TenTopping))
                     {
-                        <div class="btn_size">
-                            <label>
-                                <input type="checkbox" name="lstMaTopping" value="@topping.MaTopping" />
-                                @topping.TenTopping
-                            </label>
-                        </div>
+                        <label class="btn_size">
+                            <input type="checkbox" name="lstMaTopping" value="@topping.MaTopping" hidden />
+                            <span>@topping.TenTopping</span>
+                        </label>
                     }
                 }
             </div>
+
+
             <div class="add-to-cart">
                 <div class="cart-quantity">
-                    <img src="~/Content/Image/minus.svg" />
-                    <input type="text" value="1" name="SoLuong"/>
-                    <img src="~/Content/Image/plus.svg" />
+                    <a href="#" onclick="changeQuantity(-1, this)"><img src="~/Content/Image/minus.svg" /></a>
+                    <input type="text" value="1" name="SoLuong" id="quantity" />
+                    <a href="#" onclick="changeQuantity(1, this)"><img src="~/Content/Image/plus.svg" /></a>
                 </div>
                 <div class="add-to-cart_button">
                     <button type="submit" class="add-to-cart_button">
@@ -94,9 +121,63 @@
                     </button>
                 </div>
             </div>
+        </form>
             <div class="product-detail-type">
                 <span style="font-weight:600; color: #333">Loại sản phẩm:</span> @Model.LoaiSanPham.TenLoaiSP
             </div>
-        </div>
-    </form>
+    </div>
 </div>
+
+<div class="description-title-bar">
+    <div class="description-title">
+        Mô tả sản phẩm
+    </div>
+</div>
+<div class="description-content">
+    @Model.MoTa
+</div>
+<div class="relate-products-title">
+    <p>Sản Phẩm Liên Quan</p>
+</div>
+<div class="deltail-product-container">
+    <div class="details-row">
+        @foreach (SanPham sp in @ViewBag.SanPhamCungLoai)
+        {
+            <div class="product-item">
+                <div class="card">
+                    <a href="/Home/ProductDetails/@sp.MaSanPham">
+                        <img src="~/Content/HinhAnh/@sp.HinhAnh" alt="Alternate Text" class="card-img-top" />
+                    </a>
+                    <div class="card-body">
+                        <div class="card-title">
+                            <p>@sp.TenSanPham</p>
+                            <p style="font-size:16px; font-weight:500">
+                                @string.Format("{0:N0} VND", sp.Gia)
+                            </p>
+                        </div>
+                        <div class="card-btn">
+                            <a href="/Home/AddToCart?MaSP=@sp.MaSanPham&SoLuong=1&MaLoaiSP=@ViewBag.MaLoaiSP">
+                                <img class="img-card-btn" src="~/Content/Image/Add To Cart.svg" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
+
+<script>
+    function changeQuantity(delta, element) {
+        const quantityInput = element.parentElement.querySelector("#quantity");
+
+        let currentValue = parseInt(quantityInput.value) || 0;
+        currentValue += delta;
+        if (currentValue < 0) {
+            currentValue = 0;
+        }
+        quantityInput.value = currentValue;
+    }
+
+</script>

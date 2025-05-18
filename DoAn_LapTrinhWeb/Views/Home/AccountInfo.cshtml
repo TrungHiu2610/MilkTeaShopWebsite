@@ -1,0 +1,73 @@
+﻿@using DoAn_LapTrinhWeb.Models;
+@{
+    ViewBag.Title = "AccountInfo";
+    Layout = "~/Views/Shared/KhachHang.cshtml";
+    <link href="~/Content/Main.css" rel="stylesheet" />
+    <link href="~/Content/CheckOut.css" rel="stylesheet" />
+    NguoiDung user = Session["acc"] as NguoiDung;
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+else if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-error">
+        @TempData["ErrorMessage"]
+    </div>
+}
+@using (Html.BeginForm("UpdateAccountInfo", "Home", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="header">
+        Thông Tin Tài Khoản
+    </div>
+    <div class="container">
+        <div class="col-8">
+            <!-- Họ và tên -->
+            <label class="label">Họ và tên</label>
+            <div class="form-group" style="margin-top: 8px">
+                <input type="text" name="CustomerName" value="@user.HoTen" placeholder="Họ và Tên" class="form-control" required />
+            </div>
+
+            <!-- Địa Chỉ -->
+            <label class="label">Địa Chỉ</label>
+            <div class="form-group" style="margin-top: 8px">
+                <input type="text" name="Address" value="@user.DiaChi" placeholder="Địa Chỉ" class="form-control" required />
+            </div>
+
+            <!-- Số Điện Thoại -->
+            <label class="label">Số Điện Thoại</label>
+            <div class="form-group" style="margin-top: 8px">
+                <input type="text" name="PhoneNumber" value="@user.SoDienThoai" placeholder="Số Điện Thoại" class="form-control" required />
+            </div>
+            <button type="submit" class="btn_checkout" style="width: 150px">Lưu thay đổi</button>
+        </div>
+    </div>
+}
+
+@using (Html.BeginForm("ChangePassword", "Home", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="header">
+        Đổi mật khẩu
+    </div>
+    <div class="container">
+        <div class="col-8">
+            <!-- Mật khẩu cũ -->
+            <label class="label">Mật Khẩu Cũ</label>
+            <div class="form-group" style="margin-top: 8px">
+                <input type="password" name="OldPassword" placeholder="Mật khẩu cũ" class="form-control" required />
+            </div>
+
+            <!-- Mật khẩu mới -->
+            <label class="label">Mật Khẩu Mới</label>
+            <div class="form-group" style="margin-top: 8px">
+                <input type="password" name="NewPassword" placeholder="Mật khẩu mới" class="form-control" required />
+            </div>
+            <button type="submit" class="btn_checkout" style="width: 150px">Lưu thay đổi</button>
+        </div>
+    </div>
+}

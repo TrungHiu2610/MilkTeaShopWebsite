@@ -1,7 +1,7 @@
 ﻿@using DoAn_LapTrinhWeb.Models;
 @{
     GioHangModel cart;
-    if(Session["gh"] != null)
+    if (Session["gh"] != null)
     {
         GioHang _cart = Session["gh"] as GioHang;
         cart = new GioHangModel(_cart);
@@ -48,8 +48,8 @@
                 </a>
                 <!-- Dropdown menu -->
                 <div class="dropdown-menu" id="dropdownMenu">
-                    <a href="/account/details">Thông tin tài khoản</a>                    
-                    <a href="/Home/HistoryOrders/@user.MaNguoiDung">Lịch sử đơn hàng</a>
+                    <a href="/Home/AccountInfo">Thông tin tài khoản</a>
+                    <a href="/Home/HistoryOrders/@user.MaNguoiDung">Lịch sử mua hàng</a>
                     <a href="/Home/LogOut">Đăng xuất</a>
                 </div>
             </div>
@@ -68,7 +68,7 @@
         <div class="cart">
             <div style="display: flex; align-items: center">
                 <div style="height: 34px; width: 34px; align-self: flex-end; position: relative;">
-                    <a href="/Home/ViewCart"><img src="~/Content/Image/Rectangle.svg" /></a>
+                    <a href="/Home/ViewCart"><img id="cart_img" src="~/Content/Image/Rectangle.svg" /></a>
                     <div class="number">
                         <!-- Đây là số hàng trong giỏ hàng -->
                         @if (cart != null)
@@ -112,5 +112,6 @@
     <div>
         @RenderBody()
     </div>
+    <script src="~/Content/JavaScript1.js"></script>
 </body>
 </html>

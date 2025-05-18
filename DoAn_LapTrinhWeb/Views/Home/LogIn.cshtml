@@ -1,4 +1,6 @@
-﻿@{
+﻿@model LoginViewModel
+
+@{
     ViewBag.Title = "LogIn";
     Layout = "~/Views/Shared/KhachHang.cshtml";
 }
@@ -13,6 +15,20 @@
         <span style="color: #C58A66">Đăng nhập</span>
     </div>
 </div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+else if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-error">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 @using (Html.BeginForm("LogIn", "Home", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
@@ -21,16 +37,12 @@
             <span>Đăng Nhập</span>
         </div>
         <div class="form-group">
-            <input type="text" name="PhoneNumber" placeholder="Số Điện Thoại" class="form-control" />
+            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "Số Điện Thoại" })
+            @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
         </div>
         <div class="form-group">
-            <input type="password" name="Password" placeholder="Mật khẩu" class="form-control" />
-        </div>
-        <div class="form-group" style="justify-content:flex-start; margin-bottom: 0">
-            <label style="font-size:14px">
-                <input type="checkbox" name="RememberAccount" />
-                Ghi nhớ tài khoản
-            </label>
+            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Mật khẩu" })
+            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
         </div>
         <button type="submit" class="btn-primary">Đăng nhập</button>
         <div class="form-group" style="margin-top:20px;margin-bottom:0px">

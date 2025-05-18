@@ -5,9 +5,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using PagedList;
-using System.Web.UI;
 namespace DoAn_LapTrinhWeb.Controllers
 {
+    [RoleAuthorize("NV")]
     public class NhanVienController : Controller
     {
         DB_QL_CuaHangTraSuaDataContext data = new DB_QL_CuaHangTraSuaDataContext();
@@ -19,6 +19,7 @@ namespace DoAn_LapTrinhWeb.Controllers
             return View();
         }
 
+        // ================================= QUẢN LÝ SẢN PHẨM ==========================================
         [HttpGet]
         public ActionResult Products(int? page)
         {
@@ -69,6 +70,8 @@ namespace DoAn_LapTrinhWeb.Controllers
             List<LoaiSanPham> lstLoai = data.LoaiSanPhams.ToList();
 
             ViewBag.DanhMucLoai = new SelectList(lstLoai, "MaLoaiSP", "TenLoaiSP");
+            ViewBag.maSP = maSP;
+            ViewBag.tenSP = tenSP;
 
             var lstPage = lstSP.ToPagedList(pageNumber, pageSize);
 
@@ -109,48 +112,6 @@ namespace DoAn_LapTrinhWeb.Controllers
 
             return RedirectToAction("Products");
         }
-        // Trang xác nhận xóa
-        [HttpGet]
-        public ActionResult ConfirmDelete(string selectedProducts)
-        {
-            if (string.IsNullOrEmpty(selectedProducts))
-            {
-                TempData["Message"] = "Không có sản phẩm nào được chọn.";
-                return RedirectToAction("Products");
-            }
-
-            // Lấy danh sách sản phẩm cần xóa
-            var ids = selectedProducts.Split(',');
-            var productsToDelete = data.SanPhams.Where(p => ids.Contains(p.MaSanPham)).GroupBy(x => x.MaSanPham).Select(x => x.FirstOrDefault()).ToList();
-
-            return View(productsToDelete);
-        }
-
-        // xóa khi người dùng xác nhận
-        [HttpPost]
-        public ActionResult ConfirmDelete(string[] selectedProducts)
-        {
-            if (selectedProducts == null || selectedProducts.Length == 0)
-            {
-                TempData["Message"] = "Không có sản phẩm nào được chọn để xóa.";
-                return RedirectToAction("Products");
-            }
-
-            foreach (var id in selectedProducts)
-            {
-                var lstProducts = data.SanPhams.Where(p => p.MaSanPham == id).ToList();
-                if (lstProducts.Count > 0)
-                {
-                    foreach (SanPham sp in lstProducts)
-                        data.SanPhams.DeleteOnSubmit(sp);
-                }
-            }
-            data.SubmitChanges();
-
-            TempData["Message"] = "Xóa sản phẩm thành công.";
-            return RedirectToAction("Products");
-        }
-
 
         [HttpGet]
         public ActionResult AddProduct()
@@ -206,7 +167,7 @@ namespace DoAn_LapTrinhWeb.Controllers
             {
                 // Tạo mã sản phẩm mới
                 var lastProduct = data.SanPhams.OrderByDescending(p => p.MaSanPham).FirstOrDefault();
-                string newMaSanPham = "SP001"; // Mặc định nếu chưa có sản phẩm nào
+                string newMaNV = "SP001"; // Mặc định nếu chưa có sản phẩm nào
 
                 if (lastProduct != null)
                 {
@@ -215,10 +176,10 @@ namespace DoAn_LapTrinhWeb.Controllers
                     int lastNumber = int.Parse(lastNumberStr);
 
                     // Tăng lên 1 và định dạng lại
-                    newMaSanPham = "SP" + (lastNumber + 1).ToString("D3");
+                    newMaNV = "SP" + (lastNumber + 1).ToString("D3");
                 }
 
-                sp.MaSanPham = newMaSanPham; // Gán mã sản phẩm mới
+                sp.MaSanPham = newMaNV; // Gán mã sản phẩm mới
 
                 if (fileProductImg != null)
                 {
@@ -238,7 +199,7 @@ namespace DoAn_LapTrinhWeb.Controllers
                             MaSanPham = sp.MaSanPham,
                             TenSanPham = sp.TenSanPham,
                             MaLoaiSP = sp.MaLoaiSP,
-                            Gia = giaGoc,  
+                            Gia = giaGoc,
                             MoTa = sp.MoTa,
                             TrangThai = sp.TrangThai,
                             SoLuong = sp.SoLuong,
@@ -277,6 +238,50 @@ namespace DoAn_LapTrinhWeb.Controllers
 
             return View(sp);
         }
+        // Trang xác nhận xóa
+        [HttpGet]
+        public ActionResult ConfirmDelete(string selectedProducts)
+        {
+            if (string.IsNullOrEmpty(selectedProducts))
+            {
+                TempData["Message"] = "Không có sản phẩm nào được chọn.";
+                return RedirectToAction("Products");
+            }
+
+            // Lấy danh sách sản phẩm cần xóa
+            var ids = selectedProducts.Split(',');
+            var productsToDelete = data.SanPhams.Where(p => ids.Contains(p.MaSanPham)).GroupBy(x => x.MaSanPham).Select(x => x.FirstOrDefault()).ToList();
+
+            return View(productsToDelete);
+        }
+
+        // xóa khi người dùng xác nhận
+        [HttpPost]
+        public ActionResult ConfirmDelete(string[] selectedProducts)
+        {
+            if (selectedProducts == null || selectedProducts.Length == 0)
+            {
+                TempData["Message"] = "Không có sản phẩm nào được chọn để xóa.";
+                return RedirectToAction("Products");
+            }
+
+            foreach (var id in selectedProducts)
+            {
+                var lstProducts = data.SanPhams.Where(p => p.MaSanPham == id).ToList();
+                if (lstProducts.Count > 0)
+                {
+                    foreach (SanPham sp in lstProducts)
+                        data.SanPhams.DeleteOnSubmit(sp);
+                }
+            }
+            data.SubmitChanges();
+
+            TempData["Message"] = "Xóa sản phẩm thành công.";
+            return RedirectToAction("Products");
+        }
+
+
+
         [HttpGet]
         public ActionResult EditProduct(string selectedProducts)
         {
@@ -369,6 +374,223 @@ namespace DoAn_LapTrinhWeb.Controllers
             return RedirectToAction("Products", "NhanVien");
         }
 
+        // ================================= QUẢN LÝ DANH MỤC SẢN PHẨM ==========================================
+        public ActionResult Categories(int? page)
+        {
+            int pageSize = 6; // số sp mỗi trang
+            int pageNumber = page ?? 1; // trang hiện tại
+
+            List<LoaiSanPham> lstLSP = data.LoaiSanPhams.ToList();
+
+            var lstPage = lstLSP.ToPagedList(pageNumber, pageSize);
+
+            return View(lstPage);
+        }
+
+        [HttpPost]
+        public ActionResult Categories( string maLoai,string tenLoai, int? page)
+        {
+            int pageSize = 6; // số sp mỗi trang
+            int pageNumber = page ?? 1; // trang hiện tại
+
+            List<LoaiSanPham> lstLSP = data.LoaiSanPhams.ToList();
+
+
+            if (!string.IsNullOrEmpty(maLoai))
+            {
+                lstLSP = lstLSP.Where(x => x.MaLoaiSP.Contains(maLoai)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(tenLoai))
+            {
+                lstLSP = lstLSP.Where(x => x.TenLoaiSP.Contains(tenLoai)).ToList();
+            }
+
+            ViewBag.maLoai = maLoai;    
+            ViewBag.tenLoai = tenLoai;  
+
+            var lstPage = lstLSP.ToPagedList(pageNumber, pageSize);
+
+            return View(lstPage);
+        }
+
+        [HttpPost]
+        public ActionResult HandleAction_Category(string action, string[] selectedCategories)
+        {
+            if (!action.Contains("Add") && (selectedCategories == null || selectedCategories.Length == 0))
+            {
+                TempData["Message"] = "Không có danh mục sản phẩm nào được chọn.";
+                return RedirectToAction("Categories");
+            }
+            switch (action)
+            {
+                case "AddByView":
+                    return RedirectToAction("AddCategory");
+                case "AddByExcelFile":
+                    return RedirectToAction("Categories");
+
+                case "Edit":
+                    // chuyển hướng sang trang sửa sản phẩm với danh sách sản phẩm được chọn
+                    return RedirectToAction("EditCategory", new { selectedCategories = string.Join(",", selectedCategories) });
+
+                case "Delete":
+                    return RedirectToAction("ConfirmDelete_Category", new { selectedCategories = string.Join(",", selectedCategories) });
+
+                default:
+                    TempData["Message"] = "Hành động không hợp lệ.";
+                    break;
+            }
+
+
+            return RedirectToAction("Categories");
+        }
+
+        [HttpGet]
+        public ActionResult AddCategory()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult AddCategory(LoaiSanPham lsp, string action)
+        {
+
+            // nếu ko nhập gì thì cho phép quay lại trang loại sản phẩm
+            bool isAnyFieldEntered = !string.IsNullOrEmpty(lsp.TenLoaiSP);
+            if (action == "QuayLaiDanhSach" && !isAnyFieldEntered)
+            {
+                return RedirectToAction("Categories", "NhanVien");
+            }
+            // kiểm tra các ô nhập liệu
+            if (string.IsNullOrEmpty(lsp.TenLoaiSP))
+            {
+                ModelState.AddModelError("TenLoaiSP", "Vui lòng nhập tên loại sản phẩm.");
+            }
+            
+
+            if (ModelState.IsValid)
+            {
+                // Tạo mã sản phẩm mới
+                var lastCategory = data.LoaiSanPhams.OrderByDescending(p => p.MaLoaiSP).FirstOrDefault();
+                string newMaNV = "LSP001"; // Mặc định nếu chưa có sản phẩm nào
+
+                if (lastCategory != null)
+                {
+                    // Tách phần số từ mã sản phẩm cuối cùng (VD: LSP015 -> 15)
+                    string lastNumberStr = lastCategory.MaLoaiSP.Substring(3);
+                    int lastNumber = int.Parse(lastNumberStr);
+
+                    // Tăng lên 1 và định dạng lại
+                    newMaNV = "LSP" + (lastNumber + 1).ToString("D3");
+                }
+
+                lsp.MaLoaiSP = newMaNV; // Gán mã sản phẩm mới
+                data.LoaiSanPhams.InsertOnSubmit(lsp);
+                data.SubmitChanges();
+
+                if (action == "ThemTiep")
+                {
+                    ModelState.Clear();
+                    ViewBag.Message = "Thêm thành công";
+                    return View();
+                }
+                else if (action == "QuayLaiDanhSach")
+                {
+                    return RedirectToAction("Categories", "NhanVien");
+                }
+            }
+
+            return View(lsp);
+        }
+        // Trang xác nhận xóa
+        [HttpGet]
+        public ActionResult ConfirmDelete_Category(string selectedCategories)
+        {
+            if (string.IsNullOrEmpty(selectedCategories))
+            {
+                TempData["Message"] = "Không có loại sản phẩm nào được chọn.";
+                return RedirectToAction("Categories");
+            }
+
+            // Lấy danh sách sản phẩm cần xóa
+            var ids = selectedCategories.Split(',');
+            var categoriesToDelete = data.LoaiSanPhams.Where(p => ids.Contains(p.MaLoaiSP)).ToList();
+
+            return View(categoriesToDelete);
+        }
+
+        // xóa khi người dùng xác nhận
+        [HttpPost]
+        public ActionResult ConfirmDelete_Category(string[] selectedCategories)
+        {
+            if (selectedCategories == null || selectedCategories.Length == 0)
+            {
+                TempData["Message"] = "Không có loại sản phẩm nào được chọn để xóa.";
+                return RedirectToAction("Categories");
+            }
+
+            foreach (var id in selectedCategories)
+            {
+                var lstCategories = data.LoaiSanPhams.Where(p => p.MaLoaiSP == id).ToList();
+                if (lstCategories.Count > 0)
+                {
+                    foreach (LoaiSanPham lsp in lstCategories)
+                        data.LoaiSanPhams.DeleteOnSubmit(lsp);
+                }
+            }
+            data.SubmitChanges();
+
+            TempData["Message"] = "Xóa sản phẩm thành công.";
+            return RedirectToAction("Categories");
+        }
+
+        [HttpGet]
+        public ActionResult EditCategory(string selectedCategories)
+        {
+            if (string.IsNullOrEmpty(selectedCategories))
+            {
+                TempData["Message"] = "Không có sản phẩm nào được chọn.";
+                return RedirectToAction("Categories");
+            }
+
+            var ids = selectedCategories.Split(',').Where(id => !string.IsNullOrWhiteSpace(id))
+                               .ToList();
+
+            var categoriesToEdit = data.LoaiSanPhams.Where(p => ids.Contains(p.MaLoaiSP)).ToList();
+
+            if (!categoriesToEdit.Any())
+            {
+                TempData["Message"] = "Không tìm thấy sản phẩm nào để chỉnh sửa.";
+                return RedirectToAction("Categories");
+            }
+            return View(categoriesToEdit);
+        }
+
+        [HttpPost]
+        public ActionResult EditCategory(Dictionary<string, LoaiSanPham> updatedCategories)
+        {
+
+            if (updatedCategories == null || updatedCategories.Count == 0)
+            {
+                TempData["Message"] = "Không có loại sản phẩm nào được cập nhật.";
+                return RedirectToAction("Categories");
+            }
+            foreach (var item in updatedCategories)
+            {
+                var lsp = data.LoaiSanPhams.FirstOrDefault(p => p.MaLoaiSP == item.Key);
+                if (lsp != null)
+                {
+                    // Cập nhật thông tin chung của sản phẩm
+                    lsp.TenLoaiSP = item.Value.TenLoaiSP;
+                }
+            }
+            data.SubmitChanges();
+            TempData["Message"] = "Cập nhật loại sản phẩm thành công.";
+            return RedirectToAction("Categories", "NhanVien");
+        }
+
+
+        // ================================= QUẢN LÝ ĐƠN HÀNG ==========================================
         [HttpGet]
         public ActionResult Orders(int? page)
         {
@@ -450,8 +672,12 @@ namespace DoAn_LapTrinhWeb.Controllers
             ViewBag.lstCTHD = data.ChiTietHoaDonBanHangs.Where(x => x.MaHoaDon == maHD).ToList();
             ViewBag.lstTopping = data.ToppingDonHangs.ToList();
             // tổng đơn hàng ko tính giảm giá, phí vận chuyển
-            ViewBag.tongDonHang = data.ChiTietHoaDonBanHangs.Where(x => x.MaHoaDon == maHD).Sum(x => x.Gia * x.SoLuong)
-                + data.ToppingDonHangs.Where(x => x.MaHoaDon == maHD).Sum(x => x.Topping.Gia);
+            ViewBag.tongDonHang = data.ChiTietHoaDonBanHangs.Where(x => x.MaHoaDon == maHD).Sum(x => x.Gia * x.SoLuong);
+
+            if (data.ToppingDonHangs.Where(x => x.MaHoaDon == maHD).ToList().Count > 0)
+            {
+                ViewBag.tongDonHang += data.ToppingDonHangs.Where(x => x.MaHoaDon == maHD).Sum(x => x.Topping.Gia);
+            }
 
             return View(hd);
         }
@@ -470,12 +696,182 @@ namespace DoAn_LapTrinhWeb.Controllers
                 }
                 else if (action == "reject")
                 {
-                    hd.TrangThai = "Đã hủy";
+                    hd.TrangThai = "Đã từ chối";
                     TempData["Message"] = "Đã từ chối đơn hàng";
                 }
                 data.SubmitChanges();
             }
             return RedirectToAction("OrderDetail", "NhanVien", new { maHD = maHD });
         }
+
+
+
+        // ================================= QUẢN LÝ NHÂN VIÊN ==========================================
+        public ActionResult Employees(int? page)
+        {
+            int pageSize = 6; // số sp mỗi trang
+            int pageNumber = page ?? 1; // trang hiện tại
+
+            List<NguoiDung> lstUser = data.NguoiDungs.Where(x => x.MaQuyen == "NV").ToList();
+
+            var lstPage = lstUser.ToPagedList(pageNumber, pageSize);
+
+            return View(lstPage);
+        }
+
+        [HttpPost]
+        public ActionResult Employees(int maNV, string tenNV, int? page)
+        {
+            int pageSize = 6; // số sp mỗi trang
+            int pageNumber = page ?? 1; // trang hiện tại
+
+            List<NguoiDung> lstUser = data.NguoiDungs.Where(x => x.MaQuyen == "NV").ToList();
+
+
+            if (!string.IsNullOrEmpty(maNV.ToString()))
+            {
+                lstUser = lstUser.Where(x => x.MaNguoiDung == maNV).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(tenNV))
+            {
+                lstUser = lstUser.Where(x => x.HoTen.Contains(tenNV)).ToList();
+            }
+
+            ViewBag.maNV = maNV;
+            ViewBag.tenNV = tenNV;
+
+            var lstPage = lstUser.ToPagedList(pageNumber, pageSize);
+
+            return View(lstPage);
+        }
+
+
+        [HttpGet]
+        public ActionResult AddEmployee()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult AddEmployee(NguoiDung user, string action)
+        {
+            // nếu ko nhập gì thì cho phép quay lại trang sản phẩm
+            bool isAnyFieldEntered = !string.IsNullOrEmpty(user.HoTen) || !string.IsNullOrEmpty(user.SoDienThoai) || !string.IsNullOrEmpty(user.DiaChi) || !string.IsNullOrEmpty(user.MatKhau);
+            if (action == "QuayLaiDanhSach" && !isAnyFieldEntered)
+            {
+                return RedirectToAction("Employees", "NhanVien");
+            }
+            // kiểm tra các ô nhập liệu
+            if (string.IsNullOrEmpty(user.HoTen))
+            {
+                ModelState.AddModelError("HoTen", "Họ tên không được bỏ trống");
+            }
+            if (string.IsNullOrEmpty(user.SoDienThoai))
+            {
+                ModelState.AddModelError("SoDienThoai", "Số điện thoại không được bỏ trống.");
+            }
+            else
+            {
+                if (!System.Text.RegularExpressions.Regex.IsMatch(user.SoDienThoai, @"^\d{10,11}$"))
+                {
+                    ModelState.AddModelError("SoDienThoai", "Số điện thoại phải là dãy số có từ 10 đến 11 chữ số.");
+                }
+            }
+            if (string.IsNullOrEmpty(user.MatKhau))
+            {
+                ModelState.AddModelError("MatKhau", "Mật khẩu không được bỏ trống.");
+            }    
+
+            if (ModelState.IsValid)
+            {
+                data.NguoiDungs.InsertOnSubmit(user);
+                data.SubmitChanges();
+                if (action == "ThemTiep")
+                {
+                    ModelState.Clear();
+                    ViewBag.Message = "Thêm thành công";
+                    return View();
+                }
+                else if (action == "QuayLaiDanhSach")
+                {
+                    return RedirectToAction("Employees", "NhanVien");
+                }
+            }
+
+            return View(user);
+        }
+        [HttpPost]
+        public ActionResult HandleAction_Employee(string action, int[] selectedEmployees)
+        {
+            if (!action.Contains("Add") && (selectedEmployees == null || selectedEmployees.Length == 0))
+            {
+                TempData["Message"] = "Không có nhân viên nào được chọn.";
+                return RedirectToAction("Employees");
+            }
+
+            switch (action)
+            {
+                case "AddByView":
+                    return RedirectToAction("AddEmployee");
+
+                case "Delete":
+                    return RedirectToAction("ConfirmDelete_Empl", new { selectedEmployees = string.Join(",", selectedEmployees) });
+
+                default:
+                    TempData["Message"] = "Hành động không hợp lệ.";
+                    break;
+            }
+
+            return RedirectToAction("Employees");
+        }
+
+        // Trang xác nhận xóa
+        [HttpGet]
+        public ActionResult ConfirmDelete_Empl(string selectedEmployees)
+        {
+            if (string.IsNullOrEmpty(selectedEmployees))
+            {
+                TempData["Message"] = "Không có nhân viên nào được chọn.";
+                return RedirectToAction("Employees");
+            }
+
+            // Chuyển chuỗi sang mảng số nguyên
+            var ids = selectedEmployees.Split(',').Select(int.Parse).ToArray();
+
+            // Lấy danh sách nhân viên cần xóa
+            var EmployeesToDelete = data.NguoiDungs.Where(p => ids.Contains(p.MaNguoiDung)).ToList();
+
+            return View(EmployeesToDelete);
+        }
+
+
+        // xóa khi người dùng xác nhận
+        [HttpPost]
+        public ActionResult ConfirmDelete_Empl(int[] selectedEmployees)
+        {
+            if (selectedEmployees == null || selectedEmployees.Length == 0)
+            {
+                TempData["Message"] = "Không có nhân viên nào được chọn để xóa.";
+                return RedirectToAction("Employees");
+            }
+
+            // Lấy danh sách các nhân viên cần xóa
+            var EmployeesToDelete = data.NguoiDungs.Where(p => selectedEmployees.Contains(p.MaNguoiDung)).ToList();
+
+            if (EmployeesToDelete.Count > 0)
+            {
+                data.NguoiDungs.DeleteAllOnSubmit(EmployeesToDelete);
+                data.SubmitChanges();
+                TempData["Message"] = "Xóa nhân viên thành công.";
+            }
+            else
+            {
+                TempData["Message"] = "Không tìm thấy nhân viên nào để xóa.";
+            }
+
+            return RedirectToAction("Employees");
+        }
+
     }
 }

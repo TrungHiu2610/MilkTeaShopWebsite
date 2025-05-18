@@ -1,0 +1,139 @@
+﻿@using DoAn_LapTrinhWeb.Models;
+@using PagedList.Mvc
+@model PagedList.IPagedList<NguoiDung>
+
+
+@{
+    ViewBag.Title = "Employees";
+    Layout = "~/Views/Shared/_LayoutPageNhanVien.cshtml";
+}
+
+<div class="breadcrumbs">
+    <div class="locations" style="margin-left: 15%;">
+        <a href="@Url.Action("Index", "Home")"><img src="~/Content/Image/home.svg" /></a>
+    </div>
+    <div class="locations">
+        <img src="~/Content/Image/Next.svg" />
+    </div>
+    <div class="locations">
+        <span style="color: #C58A66">Danh Sách Nhân Sự</span>
+    </div>
+</div>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["Message"]
+    </div>
+}
+
+<div class="container justify-content-center">
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="form-inline">
+                <form method="post" action="/NhanVien/Employees">
+                    <input type="text" name="maNV" value="@ViewBag.maNV" placeholder="Mã nhân viên" class="form-control mr-3" />
+                    <input type="text" name="tenNV" value="@ViewBag.tenNV" placeholder="Tên nhân viên" class="form-control mr-3" />
+                    <input type="submit" value="Lọc" class="btn bg-success mr-3" />
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <form method="post" action="/NhanVien/HandleAction_Employee">
+
+        <div class="row mt-3">
+            <div class="col-12 d-flex">
+                <div class="dropdown mr-3">
+                    <button class="btn bg-success dropdown-toggle text-white" type="button" id="dropdownAdd" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Thêm mới
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownAdd">
+                        <button type="submit" name="action" value="AddByView" class="dropdown-item" style="cursor:pointer">Thêm</button>
+                    </div>
+                </div>
+
+                <div>
+                    <button class="btn bg-primary text-white" type="submit" name="action" value="Delete">
+                        Xóa
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12">
+                <table class="table table-bordered">
+                    <thead style="background-color: gray; color: white;">
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="checkAll" />
+                            </td>
+                            <td>Mã nhân viên</td>
+                            <td>Tên nhân viên</td>
+                            <td>Địa chỉ</td>
+                            <td>Số điện thoại</td>
+                            <td>Mật khẩu</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (NguoiDung nd in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="selectedEmployees" value="@nd.MaNguoiDung" />
+                                </td>
+                                <td>
+                                    @nd.MaNguoiDung
+                                </td>
+                                <td>
+                                    @nd.HoTen
+                                </td>
+                                <td>
+                                    @nd.DiaChi
+                                </td>
+                                <td>
+                                    @nd.SoDienThoai
+                                </td>
+                                <td>
+                                    @{ 
+                                        string mk = new string('*', nd.MatKhau.Trim().Length);
+                                    } 
+                                    @mk
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="pagination-container">
+                    @Html.PagedListPager(
+                        Model,
+                        page => Url.Action("Employees", new { page }),
+                        new PagedListRenderOptions
+                        {
+                            DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                            DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                            DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                            DisplayPageCountAndCurrentLocation = false,
+                            MaximumPageNumbersToDisplay = 5,
+                            DisplayEllipsesWhenNotShowingAllPageNumbers = true,
+                            UlElementClasses = new[] { "pagination", "justify-content-center" },
+                            LiElementClasses = new[] { "page-item" }
+                        }
+                    )
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById("checkAll").addEventListener("click", function () {
+        const checkboxes = document.querySelectorAll("input[name='selectedEmployees']");
+        for (const checkbox of checkboxes) {
+            checkbox.checked = this.checked;
+        }
+    });
+</script>

@@ -1,6 +1,12 @@
-﻿@{
+﻿@using DoAn_LapTrinhWeb.Models;
+@model List<ChiTietGioHang>
+@{
     ViewBag.Title = "CheckOut";
     Layout = "~/Views/Shared/KhachHang.cshtml";
+    <link href="~/Content/CheckOut.css" rel="stylesheet" />
+    <link href="~/Content/Main.css" rel="stylesheet" />
+
+    GioHangModel cart = (Session["gh"] == null) ? null : new GioHangModel((GioHang)Session["gh"]);
 }
 <div class="breadcrumbs">
     <div class="locations" style="margin-left: 15%;">
@@ -19,3 +25,138 @@
         <span style="color: #C58A66">Thông tin thanh toán</span>
     </div>
 </div>
+
+@using (Html.BeginForm("CheckOut", "Home", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="header">
+        Thông Tin Thanh Toán
+    </div>
+    <div class="container">
+        <div class="col-8">
+            <!-- Họ và tên -->
+            <label class="label">Họ và tên</label>
+            <div class="form-group" style="margin-top: 8px">
+                <input type="text" name="CustomerName" placeholder="Họ và Tên" class="form-control" required />
+            </div>
+
+            <!-- Tỉnh / Thành -->
+            <div style="display:flex; justify-content: flex-start">
+                <div>
+                    <label class="label">Tỉnh / Thành</label>
+                    <select class="form-group address_dropdown" name="City" style="margin-top: 8px" required>
+                        <option value="" selected>Chọn tỉnh / thành</option>
+                        <option value="Thành phố Hồ Chí Minh">Thành phố Hồ Chí Minh</option>
+                        <!-- Thêm các tỉnh/thành khác nếu cần -->
+                    </select>
+                </div>
+
+                <!-- Quận / Huyện -->
+                <div style="margin-left: 16px">
+                    <label class="label">Quận / Huyện</label>
+                    <select class="form-group address_dropdown" name="District" style="margin-top: 8px" required>
+                        <option value="" selected>Chọn quận / huyện</option>
+                        <option value="Quận 1">Quận 1</option>
+                        <option value="Quận 3">Quận 3</option>
+                        <option value="Quận 4">Quận 4</option>
+                        <option value="Quận 5">Quận 5</option>
+                        <option value="Quận 6">Quận 6</option>
+                        <option value="Quận 7">Quận 7</option>
+                        <option value="Quận 8">Quận 8</option>
+                        <option value="Quận 10">Quận 10</option>
+                        <option value="Quận 11">Quận 11</option>
+                        <option value="Quận 12">Quận 12</option>
+                        <option value="Quận Bình Tân">Quận Bình Tân</option>
+                        <option value="Quận Bình Thạnh">Quận Bình Thạnh</option>
+                        <option value="Quận Gò Vấp">Quận Gò Vấp</option>
+                        <option value="Quận Phú Nhuận">Quận Phú Nhuận</option>
+                        <option value="Quận Tân Bình">Quận Tân Bình</option>
+                        <option value="Quận Tân Phú">Quận Tân Phú</option>
+                        <!-- Thêm các quận khác nếu cần -->
+                    </select>
+                </div>
+            </div>
+
+            <!-- Địa Chỉ -->
+            <label class="label">Địa Chỉ</label>
+            <div class="form-group" style="margin-top: 8px">
+                <input type="text" name="Address" placeholder="Địa Chỉ" class="form-control" required />
+            </div>
+
+            <!-- Số Điện Thoại -->
+            <label class="label">Số Điện Thoại</label>
+            <div class="form-group" style="margin-top: 8px">
+                <input type="text" name="PhoneNumber" placeholder="Số Điện Thoại" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="col-4">
+            <div class="total-payment">
+                <strong>Tổng Hóa Đơn</strong>
+                <div class="product-checkout">
+                    @foreach (var item in Model)
+                    {
+                        <div style="display:flex; align-items:center; justify-content:space-between">
+                            <div style="display:flex; align-items:center">
+                                <img src="~/Content/HinhAnh/@item.SanPham.HinhAnh" style="width:60px; height:60px" />
+                                <p>@item.SanPham.TenSanPham x @item.SoLuong</p>
+                            </div>
+                            <span>@string.Format("{0:N0}", item.ThanhTien)</span>
+                        </div>
+                    }
+                </div>
+                <div class="total-products">
+                    Tổng sản phẩm:
+                    <span>
+                        @if (cart != null)
+                        {
+                            <span>@cart.getTongSoLuong()</span>
+                        }
+                        else
+                        {
+                            <span>0</span>
+                        }
+                    </span>
+                </div>
+                <div class="shipping-fee">Phí vận chuyển: <span> 0 VND</span></div>
+                <div class="total-amount">
+                    Tổng cộng:
+                    <span>
+                        @if (cart != null)
+                        {
+                            <span>@string.Format("{0:N0} VND", cart.cart.TongTien)</span>
+                        }
+                        else
+                        {
+                            <span>0</span>
+                        }
+                    </span>
+                </div>
+                <!-- Phương thức thanh toán -->
+                <div class="payment-method">
+                    <strong>Phương thức thanh toán</strong>
+                    <div class="payment-options" style="margin-top: 10px;">
+                        <label style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <input type="radio" name="paymentMethod" value="cash" style="margin-right: 10px;" required />
+                            Tiền mặt
+                        </label>
+                        <label style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <input type="radio" name="paymentMethod" value="creditDebitCard" style="margin-right: 10px;" required />
+                            Thẻ tín dụng/ghi nợ
+                        </label>
+                        <label style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <input type="radio" name="paymentMethod" value="applePay" style="margin-right: 10px;" required />
+                            Apple Pay
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Nút Đặt Hàng -->
+                <form action="@Url.Action("CheckOut", "Home")" method="post">
+                    <button type="submit" class="btn_checkout">Đặt Hàng</button>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+

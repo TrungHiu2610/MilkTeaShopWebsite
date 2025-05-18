@@ -12,7 +12,7 @@
     margin-left: auto; /* Căn giữa lưới */
     margin-right: auto; /* Căn giữa lưới */
     display: grid;
-    grid-template-columns: repeat(12, 88px); /* 12 cột, mỗi cột rộng 88px */
+    grid-template-columns: repeat(12, 80px); /* 12 cột, mỗi cột rộng 88px */
     gap: 24px; /* Khoảng cách giữa các cột là 24px */
     justify-content: center; /* Căn giữa các phần tử trong container */
     padding: 0 15%; /* Thêm padding trái và phải 15% */
@@ -226,4 +226,26 @@
     border-radius: 43px;
     cursor: pointer;
     box-sizing: border-box; /* Đảm bảo padding không ảnh hưởng đến chiều rộng */
+}
+
+.cart-quantity {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 124px;
+    height: 50px;
+    border-radius: 170px;
+    border: 1px solid #E6E6E6;
+    margin-right: 12px;
+    padding: 8px;
+    box-sizing: border-box;
+}
+.cart-quantity input {
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    border:none;
+    font-family:'fz poppins-medium';
+    font-size: 16px;
+    font-weight: 400;
 }

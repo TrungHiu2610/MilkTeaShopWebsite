@@ -1,0 +1,31 @@
+﻿@using DoAn_LapTrinhWeb.Models;
+@model List<LoaiSanPham>
+@{
+    ViewBag.Title = "ConfirmDelete_Category";
+    Layout = "~/Views/Shared/_LayoutPageNhanVien.cshtml";
+}
+
+<div class="container">
+    <div class="row d-block">
+        <h3>Xác nhận xóa sản phẩm</h3>
+        <form method="post" action="/NhanVien/ConfirmDelete_Category">
+            <p>Bạn có chắc chắn muốn xóa những sản phẩm này?</p>
+
+            <ol class="list-group" type="1">
+                @foreach (var lsp in Model)
+                {
+                    <li class="list-group-item"><p style="font-size:large;font-weight:bold">@lsp.TenLoaiSP</p></li>
+                }
+            </ol>
+
+            @foreach (var lsp in Model)
+            {
+                <input type="hidden" name="selectedCategories" value="@lsp.MaLoaiSP" />
+            }
+
+            <button type="submit" class="btn btn-danger mt-3 mr-3">Xóa</button>
+            <a href="/NhanVien/Categories" class="btn btn-secondary mt-3">Hủy bỏ</a>
+        </form>
+
+    </div>
+</div>

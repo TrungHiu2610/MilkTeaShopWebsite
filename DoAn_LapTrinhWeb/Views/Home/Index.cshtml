@@ -2,6 +2,20 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/KhachHang.cshtml";
 }
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+else if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-error">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 <div class="container_thumnail">
     <div class="img_box">
         <img src="~/Content/Image/Background.png" />

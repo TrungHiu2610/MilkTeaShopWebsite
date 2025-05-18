@@ -234,16 +234,27 @@
                                 @cthd.SanPham.Size.TenSize
                             </td>
                             <td>
-                                <ul>
-                                    @foreach (ToppingDonHang tp in lstTp)
+                                <ul style=" list-style: none; text-align: left; margin-left: -42px;">
+                                    @{
+                                        var groupedToppings = lstTp
+                                            .Where(tp => tp.MaHoaDon == cthd.MaHoaDon
+                                                      && tp.MaSanPham == cthd.MaSanPham
+                                                      && tp.MaSize == cthd.MaSize)
+                                            .GroupBy(tp => tp.Topping.TenTopping) // Nhóm theo tên topping
+                                            .Select(group => new
+                                            {
+                                                TenTopping = group.Key,
+                                                SoLuong = group.Count(), // Đếm số lượng dòng trùng nhau
+                                                GiaTopping = group.Sum(tp => tp.Topping.Gia) // Tổng giá
+                                            })
+                                            .ToList();
+                                    }
+                                    @foreach (var topping in groupedToppings)
                                     {
-                                        if (tp.MaHoaDon == cthd.MaHoaDon && tp.MaSanPham == cthd.MaSanPham && tp.MaSize == cthd.MaSize)
-                                        {
-                                            <li>
-                                                @tp.Topping.TenTopping
-                                            </li>
-                                            giaTopping += tp.Topping.Gia;
-                                        }
+                                        <li>
+                                            @topping.TenTopping (@topping.SoLuong) - @topping.GiaTopping VND
+                                        </li>
+                                        giaTopping += topping.GiaTopping;
                                     }
                                 </ul>
                             </td>

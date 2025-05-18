@@ -1,4 +1,5 @@
-﻿@{
+﻿@model RegisterViewModel
+@{
     ViewBag.Title = "Register";
     Layout = "~/Views/Shared/KhachHang.cshtml";
 }
@@ -33,23 +34,22 @@
             <span>Đăng Ký</span>
         </div>
         <div class="form-group">
-            <input type="text" name="CustomerName" placeholder="Họ và Tên" class="form-control" />
+            @Html.TextBoxFor(m => m.CustomerName, new { @class = "form-control", placeholder = "Họ và Tên" })
+            @Html.ValidationMessageFor(m => m.CustomerName, "", new { @class = "text-danger " })
         </div>
         <div class="form-group">
-            <input type="text" name="PhoneNumber" placeholder="Số Điện Thoại" class="form-control" />
+            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "Số Điện Thoại" })
+            @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
         </div>
         <div class="form-group">
-            <input type="password" name="Password" placeholder="Mật khẩu" class="form-control" />
+            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Mật khẩu" })
+            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
         </div>
         <div class="form-group">
-            <input type="password" name="ConfirmPassword" placeholder="Nhập lại mật khẩu" id="ConfirmPassword" class="form-control" />
+            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "Nhập lại mật khẩu" })
+            @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
         </div>
-        <div class="form-group" style="justify-content:flex-start; margin-bottom: 0">
-            <label style="font-size:14px">
-                <input type="checkbox" name="AgreeToTerms" required />
-                Tôi đồng ý với các <a href="/terms-and-conditions" target="_blank">Điều khoản và Dịch vụ</a>
-            </label>
-        </div>
+
         <button type="submit" class="btn-primary">Tạo Tài Khoản</button>
         <div class="form-group" style="margin-top:20px;margin-bottom:0px">
             <label style="font-size:14px">

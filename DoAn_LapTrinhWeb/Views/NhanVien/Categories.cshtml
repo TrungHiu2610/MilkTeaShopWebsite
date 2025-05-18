@@ -1,9 +1,10 @@
 ﻿@using DoAn_LapTrinhWeb.Models;
 @using PagedList.Mvc
-@model PagedList.IPagedList<SanPham>
+@model PagedList.IPagedList<LoaiSanPham>
+
 
 @{
-    ViewBag.Title = "Products";
+    ViewBag.Title = "Categories";
     Layout = "~/Views/Shared/_LayoutPageNhanVien.cshtml";
 }
 
@@ -15,7 +16,7 @@
         <img src="~/Content/Image/Next.svg" />
     </div>
     <div class="locations">
-        <span style="color: #C58A66">Danh Sách Sản Phẩm</span>
+        <span style="color: #C58A66">Danh Sách Loại Sản Phẩm</span>
     </div>
 </div>
 
@@ -31,10 +32,9 @@
     <div class="row mt-3">
         <div class="col-12">
             <div class="form-inline">
-                <form method="post" action="/NhanVien/Products">
-                    <input type="text" name="maSP" value="@ViewBag.maSP" placeholder="Mã sản phẩm" class="form-control mr-3" />
-                    <input type="text" name="tenSP" value="@ViewBag.tenSP" placeholder="Tên sản phẩm" class="form-control mr-3" />
-                    @Html.DropDownList("MaLoai", (SelectList)ViewBag.DanhMucLoai, "Chọn loại sản phẩm", new { @class = "form-control mr-3" })
+                <form method="post" action="/NhanVien/Categories">
+                    <input type="text" name="maLoai" value="@ViewBag.maLoai" placeholder="Mã loại sản phẩm" class="form-control mr-3" />
+                    <input type="text" name="tenLoai" value="@ViewBag.tenLoai" placeholder="Tên loại sản phẩm" class="form-control mr-3" />
                     <input type="submit" value="Lọc" class="btn bg-success mr-3" />
                 </form>
             </div>
@@ -42,7 +42,7 @@
     </div>
 
     <!-- Form thao tác -->
-    <form method="post" action="/NhanVien/HandleAction">
+    <form method="post" action="/NhanVien/HandleAction_Category">
         <!-- Dòng thao tác -->
         <div class="row mt-3">
             <div class="col-12 d-flex">
@@ -53,7 +53,6 @@
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownAdd">
                         <button type="submit" name="action" value="AddByView" class="dropdown-item" style="cursor:pointer">Thêm</button>
-                        <button type="submit" name="action" value="AddByExcelFile" class="dropdown-item" style="cursor:pointer">Nhập bằng Excel</button>
                     </div>
                 </div>
 
@@ -79,53 +78,24 @@
                             <td>
                                 <input type="checkbox" id="checkAll" />
                             </td>
-                            <td>Ảnh</td>
-                            <td>Mã hàng</td>
-                            <td>Tên sản phẩm</td>
-                            <td>Giá bán</td>
-                            <td>Tồn</td>
-                            <td>Trạng thái</td>
+                            <td>Mã loại</td>
+                            <td>Tên loại sản phẩm</td>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (SanPham sp in Model)
+                        @foreach (LoaiSanPham lsp in Model)
                         {
                             <tr>
                                 <td>
-                                    <input type="checkbox" name="selectedProducts" value="@sp.MaSanPham" />
+                                    <input type="checkbox" name="selectedCategories" value="@lsp.MaLoaiSP" />
                                 </td>
                                 <td>
-                                    @if (string.IsNullOrEmpty(sp.HinhAnh))
-                                    {
-                                        <img src="~/Content/Image/default_product.svg" style="width:30px;height:50px" />
-                                    }
-                                    else
-                                    {
-                                        <img src="~/Content/HinhAnh/@sp.HinhAnh" style="width:30px;height:50px" />
-                                    }
+                                   @lsp.MaLoaiSP
                                 </td>
                                 <td>
-                                    @sp.MaSanPham
+                                    @lsp.TenLoaiSP
                                 </td>
-                                <td>
-                                    @sp.TenSanPham
-                                </td>
-                                <td>
-                                    @sp.Gia.ToString("N0") VNĐ
-                                </td>
-                                <td>
-                                    @sp.SoLuong
-                                </td>
-                                <td>
-                                    @if ((bool)sp.TrangThai)
-                                    {
-                                        <span class="text-success">Đang bán</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-danger">Ngừng bán</span>
-                                    }
-                                </td>
+                             
                             </tr>
                         }
                     </tbody>
@@ -133,7 +103,7 @@
                 <div class="pagination-container">
                     @Html.PagedListPager(
                         Model,
-                        page => Url.Action("Products", new { page }),
+                        page => Url.Action("Categories", new { page }),
                         new PagedListRenderOptions
                         {
                             DisplayLinkToFirstPage = PagedListDisplayMode.Always,
@@ -143,8 +113,8 @@
                             DisplayPageCountAndCurrentLocation = false,
                             MaximumPageNumbersToDisplay = 5,
                             DisplayEllipsesWhenNotShowingAllPageNumbers = true,
-                            UlElementClasses = new[] { "pagination", "justify-content-center" }, 
-                            LiElementClasses = new[] { "page-item" } 
+                            UlElementClasses = new[] { "pagination", "justify-content-center" },
+                            LiElementClasses = new[] { "page-item" }
                         }
                     )
                 </div>
@@ -156,9 +126,10 @@
 
 <script>
     document.getElementById("checkAll").addEventListener("click", function () {
-        const checkboxes = document.querySelectorAll("input[name='selectedProducts']");
+        const checkboxes = document.querySelectorAll("input[name='selectedCategories']");
         for (const checkbox of checkboxes) {
             checkbox.checked = this.checked;
         }
     });
 </script>
+

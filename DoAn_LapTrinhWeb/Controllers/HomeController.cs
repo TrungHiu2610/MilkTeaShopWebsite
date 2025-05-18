@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using System.Web.UI.WebControls.WebParts;
 using DoAn_LapTrinhWeb.Models;
 using PagedList;
@@ -20,6 +21,7 @@ namespace DoAn_LapTrinhWeb.Controllers
         {
             return View();
         }
+
         public ActionResult Register()
         {
             return View();
@@ -27,42 +29,34 @@ namespace DoAn_LapTrinhWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(FormCollection form)
+        public ActionResult Register(RegisterViewModel model)
         {
-            string customerName = form["CustomerName"];
-            string phoneNumber = form["PhoneNumber"];
-            string password = form["Password"];
-            string confirmPassword = form["ConfirmPassword"];
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
-            var existingUser = data.NguoiDungs.FirstOrDefault(u => u.SoDienThoai == phoneNumber);
+            var existingUser = data.NguoiDungs.FirstOrDefault(u => u.SoDienThoai == model.PhoneNumber);
             if (existingUser != null)
             {
-                TempData["ErrorMessage"] = "Số điện thoại đã tồn tại. Vui lòng thử lại với số khác.";
-                return View();
+                ModelState.AddModelError("PhoneNumber", "Số điện thoại đã tồn tại.");
+                return View(model);
             }
 
-            if (password != confirmPassword)
-            {
-                TempData["ErrorMessage"] = "Mật khẩu xác nhận không khớp. Vui lòng thử lại.";
-                return View();
-            }
-
-            // Tạo người dùng mới mà không cần gán mã
             NguoiDung newUser = new NguoiDung
             {
-                HoTen = customerName,
-                SoDienThoai = phoneNumber,
-                MatKhau = password,
-                MaQuyen = "KH" // Ví dụ mã quyền "Khách hàng"
+                HoTen = model.CustomerName,
+                SoDienThoai = model.PhoneNumber,
+                MatKhau = model.Password,
+                MaQuyen = "KH"
             };
 
             data.NguoiDungs.InsertOnSubmit(newUser);
             data.SubmitChanges();
 
             TempData["SuccessMessage"] = "Đăng ký thành công! Bạn có thể đăng nhập ngay bây giờ.";
-            return RedirectToAction("LogIn", "Home");
+            return Redirect(Url.Action("LogIn", "Home"));
         }
-
 
         public ActionResult LogIn()
         {
@@ -71,23 +65,115 @@ namespace DoAn_LapTrinhWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult LogIn(FormCollection form)
+        public ActionResult LogIn(LoginViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
             NguoiDung user = data.NguoiDungs.FirstOrDefault
-                (t => t.SoDienThoai == form["PhoneNumber"] && t.MatKhau == form["Password"]);
+                (t => t.SoDienThoai == model.PhoneNumber && t.MatKhau == model.Password);
             if (user != null)
             {
-                GioHang cart = data.GioHangs.FirstOrDefault(x => x.MaNguoiDung == user.MaNguoiDung);
-                if (cart != null)
+                var sessionCart = Session["gh"] as GioHang;
+
+                GioHang dbCart = data.GioHangs.FirstOrDefault(x => x.MaNguoiDung == user.MaNguoiDung);
+                if (sessionCart != null)
                 {
-                    Session["gh"] = cart;
+                    if (dbCart != null)
+                    {
+                        var dbItems = data.ChiTietGioHangs.Where(c => c.MaGioHang == dbCart.MaGioHang).ToList();
+
+                        if(dbItems.Count!=0)
+                        {
+                            // Xóa chi tiết giỏ hàng cũ
+                            data.ChiTietGioHangs.DeleteAllOnSubmit(dbItems);
+                            data.SubmitChanges();
+                        }    
+
+                        // Gán lại các item từ session vào dbCart
+                        foreach (var item in sessionCart.ChiTietGioHangs)
+                        {
+                            var newItem = new ChiTietGioHang
+                            {
+                                MaGioHang = dbCart.MaGioHang,
+                                MaSanPham = item.MaSanPham,
+                                MaSize = item.MaSize,
+                                SoLuong = item.SoLuong,
+                                ThanhTien = item.ThanhTien,
+                            };
+                            data.ChiTietGioHangs.InsertOnSubmit(newItem);
+                            data.SubmitChanges();
+
+                            // Xử lý topping nếu có
+                            foreach (var topping in item.ToppingDonHangs)
+                            {
+                                var newTopping = new ToppingDonHang
+                                {
+                                    MaTopping = topping.MaTopping,
+                                    MaGioHang = newItem.MaGioHang,
+                                    MaHoaDon = null,
+                                    MaSize = newItem.MaSize,
+                                    MaSanPham = newItem.MaSanPham,
+                                };
+
+                                data.ToppingDonHangs.InsertOnSubmit(newTopping);
+                            }
+
+                            data.SubmitChanges();
+                        }
+
+                        GioHang dbCurrentCart = data.GioHangs.FirstOrDefault(x => x.MaNguoiDung == user.MaNguoiDung);
+                        dbCurrentCart.TongTien = dbCurrentCart.ChiTietGioHangs.Sum(x => x.ThanhTien);
+
+                        Session["gh"] = dbCurrentCart;
+                    }
+                    else
+                    {
+                        // Không có giỏ hàng trong DB, gán sessionCart cho user
+                        sessionCart.MaNguoiDung = user.MaNguoiDung;
+                        GioHang dbCartAdmin = data.GioHangs.FirstOrDefault(x => x.MaNguoiDung == 1);
+                        dbCartAdmin.MaNguoiDung = user.MaNguoiDung;
+                        data.SubmitChanges();
+                        Session["gh"] = sessionCart;
+                    }
                 }
                 else
                 {
-                    Session["gh"] = null;
+                    // Không có session, load từ DB
+                    Session["gh"] = dbCart;
                 }
                 Session["acc"] = user;
                 string vaitro = user.PhanQuyen.VaiTro;
+
+                // gán role vào cookie
+                var ticket = new FormsAuthenticationTicket(
+                                1,
+                                user.HoTen,
+                                DateTime.Now,
+                                DateTime.Now.AddMinutes(30),
+                                false,
+                                user.PhanQuyen.MaQuyen.Trim() // ← đây là chỗ bạn gán "KH", "NV", v.v.
+                                );
+                string encryptedTicket = FormsAuthentication.Encrypt(ticket);
+                var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+                Response.Cookies.Add(authCookie);
+
+                var success = TempData["SuccessMessage"] as string;
+
+                if (!string.IsNullOrEmpty(success))
+                {
+                    TempData.Remove("SuccessMessage");
+                }
+
+                // Kiểm tra nếu có URL cần quay lại
+                if (TempData["ReturnUrl"] != null)
+                {
+                    string returnUrl = TempData["ReturnUrl"].ToString();
+                    return Redirect(returnUrl);
+                }
+
                 if (vaitro == "Khách hàng")
                 {
 
@@ -98,6 +184,7 @@ namespace DoAn_LapTrinhWeb.Controllers
                     return RedirectToAction("Index", "NhanVien");
                 }
             }
+            TempData["ErrorMessage"] = "Sai tên đăng nhập hoặc mật khẩu";
             return View();
         }
         public ActionResult LogOut()
@@ -133,6 +220,267 @@ namespace DoAn_LapTrinhWeb.Controllers
 
             ViewBag.MaLoaiSP = id;
             return View(danhSachSP);
+        }
+
+        [HttpPost]
+        public ActionResult ApplyDiscount(string maGH, string maGG)
+        {
+            // kiểm tra mã giảm giá hợp lệ ko
+            GiamGia gg = data.GiamGias.FirstOrDefault(x => x.MaGG == maGG);
+            if (gg == null)
+            {
+                TempData["Message"] = "Mã giảm giá không hợp lệ";
+                return RedirectToAction("ViewCart");
+            }
+            else
+            {
+                if (gg.NgayBD <= DateTime.Now && gg.NgayKT >= DateTime.Now) // hợp lệ
+                {
+                    // kiểm tra xem đã có giảm giá hay chưa
+                    GioHang gh = data.GioHangs.FirstOrDefault(x => x.MaGioHang == maGH);
+                    if (gh.MaGG != null)
+                    {
+                        TempData["Message"] = "Bạn đã áp mã giảm giá rồi";
+                        return RedirectToAction("ViewCart");
+                    }
+
+                    // cập nhật giỏ hàng
+                    gh.MaGG = maGG;
+                    gh.TongTien = gh.TongTien - (gh.TongTien * (gg.PhanTramGiam / 100));
+                    data.SubmitChanges();
+                    TempData["Message"] = "Áp dụng mã giảm giá thành công";
+                    Session["gh"] = gh;
+                    return RedirectToAction("ViewCart");
+                }
+                else
+                {
+                    TempData["Message"] = "Mã giảm giá đã hết hạn";
+                    return RedirectToAction("ViewCart");
+                }
+            }
+        }
+
+        public ActionResult CheckOut()
+        {
+            GioHang cart = Session["gh"] as GioHang;
+            NguoiDung user = Session["acc"] as NguoiDung;
+            if (cart == null)
+            {
+                return RedirectToAction("Products");
+            }
+            if(user == null)
+            {
+                TempData["ReturnUrl"] = Url.Action("CheckOut", "Home");
+                return RedirectToAction("LogIn");
+            }    
+            List<ChiTietGioHang> cartItems = data.ChiTietGioHangs.Where(t => t.MaGioHang == cart.MaGioHang).ToList();
+            return View(cartItems);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CheckOut(FormCollection form)
+        {
+            try
+            {
+                // Lấy thông tin giỏ hàng từ session
+                GioHang cart = Session["gh"] as GioHang;
+                NguoiDung user = Session["acc"] as NguoiDung;
+
+                // Kiểm tra nếu giỏ hàng trống
+                if (cart == null || cart.ChiTietGioHangs == null || cart.ChiTietGioHangs.Count == 0)
+                {
+                    TempData["Message"] = "Giỏ hàng của bạn đang trống.";
+                    return RedirectToAction("ViewCart");
+                }
+
+                // Xác định mã người dùng hiện tại
+                int currentUserId = (user != null) ? user.MaNguoiDung : 1; // 1: mã người dùng mặc định cho khách chưa đăng nhập
+
+                // Lấy thông tin từ form
+                string hoTenKH = form["CustomerName"];
+                string diaChiGiaoHang = form["Address"] + ", " + form["District"] + ", " + form["City"]; // Kết hợp Địa chỉ, Quận, Tỉnh
+                string sdtGiaoHang = form["PhoneNumber"];
+
+                // Tạo mã hóa đơn mới
+                string sMaHD = "HD0001";
+                if (data.HoaDonBanHangs.Any())
+                {
+                    HoaDonBanHang lastHD = data.HoaDonBanHangs.OrderByDescending(t => t.MaHoaDon).FirstOrDefault();
+                    int iMaHD = int.Parse(lastHD.MaHoaDon.Substring(2)) + 1;
+                    sMaHD = "HD" + iMaHD.ToString("D3");
+                }
+
+                // Tạo đối tượng hóa đơn bán hàng
+                HoaDonBanHang hoaDon = new HoaDonBanHang
+                {
+                    MaHoaDon = sMaHD,
+                    MaKH = currentUserId,
+                    NgayLap = DateTime.Now,
+                    TongTien = (decimal)cart.TongTien, // Tính tổng tiền từ chi tiết giỏ hàng
+                    TrangThai = "Chờ xác nhận",
+                    PhuongThucThanhToan = form["paymentMethod"],
+                    DiaChiGiaoHang = diaChiGiaoHang, // Địa chỉ giao hàng đầy đủ
+                    HoTenKH = hoTenKH, // Họ tên khách hàng
+                    SdtGiaoHang = sdtGiaoHang, // Số điện thoại giao hàng
+                    MaGG = cart.MaGG
+                };
+
+                // Thêm hóa đơn vào cơ sở dữ liệu
+                data.HoaDonBanHangs.InsertOnSubmit(hoaDon);
+
+                // Thêm chi tiết hóa đơn bán hàng
+                foreach (var item in cart.ChiTietGioHangs)
+                {
+                    SanPham sp = data.SanPhams.FirstOrDefault(x => x.MaSanPham == item.MaSanPham && x.MaSize == item.MaSize);
+                    ChiTietHoaDonBanHang chiTietHD = new ChiTietHoaDonBanHang
+                    {
+                        MaHoaDon = sMaHD,
+                        MaSanPham = item.MaSanPham,
+                        MaSize = item.MaSize,
+                        SoLuong = item.SoLuong,
+                        Gia = sp.Gia
+                        //Thêm thông tin còn thiếu
+                    };
+
+                    // cập nhật ToppingDonHang => chuyển từ giỏ hàng sang hóa đơn
+                    List<ToppingDonHang> lstTp = data.ToppingDonHangs.Where(x => x.MaSanPham == item.MaSanPham && x.MaSize == item.MaSize && x.MaGioHang == item.MaGioHang).ToList();
+                    foreach (ToppingDonHang tpdh in lstTp)
+                    {
+                        if (tpdh != null)
+                        {
+                            tpdh.MaGioHang = null;
+                            tpdh.MaHoaDon = chiTietHD.MaHoaDon;
+                        }
+                    }
+
+                    // Thêm chi tiết hóa đơn vào cơ sở dữ liệu
+                    data.ChiTietHoaDonBanHangs.InsertOnSubmit(chiTietHD);
+                }
+
+                // Lưu thay đổi vào cơ sở dữ liệu
+                data.SubmitChanges();
+
+                // Xóa giỏ hàng của người dùng hiện tại sau khi thanh toán thành công
+
+                var cartToDelete = data.GioHangs.Where(t => t.MaNguoiDung == currentUserId).FirstOrDefault();
+                if (cartToDelete != null)
+                {
+                    // Xóa giỏ hàng có mã người dùng tương ứng và trạng thái là "Đang xử lý"
+                    data.GioHangs.DeleteOnSubmit(cartToDelete);
+                    data.SubmitChanges();
+                }
+
+                // Xóa giỏ hàng khỏi session
+                Session["gh"] = null;
+
+                // Thông báo thành công
+                TempData["SuccessMessage"] = "Đặt hàng thành công! Chúng tôi sẽ liên hệ bạn sớm nhất.";
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                // Ghi log lỗi nếu cần
+                TempData["ErrorMessage"] = "Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại sau.";
+                // Có thể thêm ghi log lỗi: Log.Error(ex);
+                return RedirectToAction("ViewCart");
+            }
+        }
+        public ActionResult AccountInfo()
+        {
+            TempData["SuccessMessage"] = null;
+            NguoiDung user = Session["acc"] as NguoiDung;
+            return View(user);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateAccountInfo(string CustomerName, string Address, string PhoneNumber)
+        {
+            var currentUser = Session["acc"] as NguoiDung;
+            if (currentUser == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            NguoiDung user = data.NguoiDungs.FirstOrDefault(u => u.MaNguoiDung == currentUser.MaNguoiDung);
+            if (user != null)
+            {
+                user.HoTen = CustomerName;
+                user.DiaChi = Address;
+                user.SoDienThoai = PhoneNumber;
+
+                // Sử dụng phương thức SubmitChanges()
+
+                data.Refresh(System.Data.Linq.RefreshMode.KeepCurrentValues, user); // Đảm bảo trạng thái đúng
+                data.SubmitChanges(); // Lưu thay đổi
+
+                // Cập nhật thông tin trong session
+                Session["acc"] = user;
+                TempData["SuccessMessage"] = "Cập nhật thông tin tài khoản thành công!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy người dùng!";
+            }
+            return RedirectToAction("AccountInfo", "Home");
+        }
+
+        // Đổi mật khẩu
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ChangePassword(string OldPassword, string NewPassword)
+        {
+            var currentUser = Session["acc"] as NguoiDung;
+            if (currentUser == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            // Tìm người dùng hiện tại trong cơ sở dữ liệu
+            var user = data.NguoiDungs.FirstOrDefault(u => u.MaNguoiDung == currentUser.MaNguoiDung);
+            if (user != null)
+            {
+                // Loại bỏ khoảng trắng thừa từ mật khẩu trong cơ sở dữ liệu
+                string dbPassword = user.MatKhau;
+                if (dbPassword != null)
+                {
+                    dbPassword = dbPassword.Trim();  // Loại bỏ khoảng trắng trong mật khẩu lưu trữ
+                }
+
+                // Loại bỏ khoảng trắng thừa từ mật khẩu cũ người dùng nhập
+                if (OldPassword != null)
+                {
+                    OldPassword = OldPassword.Trim();  // Loại bỏ khoảng trắng từ mật khẩu cũ nhập vào
+                }
+
+                // So sánh mật khẩu cũ sau khi đã loại bỏ khoảng trắng
+                if (dbPassword == OldPassword)
+                {
+                    // Loại bỏ khoảng trắng thừa từ mật khẩu mới người dùng nhập
+                    if (NewPassword != null)
+                    {
+                        NewPassword = NewPassword.Trim();  // Loại bỏ khoảng trắng từ mật khẩu mới nhập vào
+                    }
+
+                    // Cập nhật mật khẩu mới vào cơ sở dữ liệu
+                    user.MatKhau = NewPassword;
+
+                    // Đồng bộ hóa trạng thái và lưu thay đổi vào cơ sở dữ liệu
+                    data.Refresh(System.Data.Linq.RefreshMode.KeepCurrentValues, user);
+                    data.SubmitChanges();
+
+                    TempData["SuccessMessage"] = "Đổi mật khẩu thành công!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Mật khẩu cũ không đúng!";
+                }
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy người dùng!";
+            }
+
+            return RedirectToAction("AccountInfo", "Home");
         }
 
         private void capNhatTongTienGioHang(string maGH)
@@ -220,6 +568,7 @@ namespace DoAn_LapTrinhWeb.Controllers
 
             if (lstMaTopping != null && lstMaTopping.Any())
             {
+                // update lại ToppingDonHang
 
                 List<ToppingDonHang> lstTP = lstMaTopping.Select(maTP => new ToppingDonHang
                 {
@@ -229,13 +578,28 @@ namespace DoAn_LapTrinhWeb.Controllers
                     MaSize = maSize,
                     MaTopping = int.Parse(maTP)
                 }).ToList();
-
-                data.ToppingDonHangs.InsertAllOnSubmit(lstTP);
+                // thêm soLuong dòng mới ToppingDonHang
+                for (int i = 0; i < SoLuong; i++)
+                {
+                    foreach (var tp in lstTP)
+                    {
+                        ToppingDonHang newTp = new ToppingDonHang
+                        {
+                            MaGioHang = tp.MaGioHang,
+                            MaSanPham = tp.MaSanPham,
+                            MaSize = tp.MaSize,
+                            MaTopping = tp.MaTopping
+                        };
+                        data.ToppingDonHangs.InsertOnSubmit(newTp);
+                    }
+                }
                 data.SubmitChanges();
+
+
                 giaTopping = data.ToppingDonHangs.Where(x => x.MaGioHang == cart.MaGioHang && x.MaSanPham == MaSP && x.MaSize == maSize).Sum(x => x.Topping.Gia);
                 // cập nhật lại thành tiền
                 cartItem = data.ChiTietGioHangs.FirstOrDefault(t => t.MaGioHang == cart.MaGioHang && t.MaSanPham == MaSP && t.MaSize == maSize);
-                cartItem.ThanhTien = (donGia + giaTopping) * cartItem.SoLuong;
+                cartItem.ThanhTien = (donGia * cartItem.SoLuong) + giaTopping;
                 data.SubmitChanges();
             }
 
@@ -254,8 +618,31 @@ namespace DoAn_LapTrinhWeb.Controllers
                 return RedirectToAction("Products", new { id = MaLoaiSP.Trim() }); // Chuyển hướng đến danh mục đã chọn
         }
 
+        List<ToppingDonHang> layDanhSachToppingKoTrung(List<ToppingDonHang> lstTp)
+        {
+            if (lstTp == null || lstTp.Count == 0)
+                return null;
+
+            var lstKoTrung = lstTp
+                .GroupBy(tp => new { tp.MaGioHang, tp.MaSanPham, tp.MaSize, tp.MaTopping })
+                .Select(group => group.First())
+                .ToList();
+
+            return lstKoTrung;
+        }
+
+        decimal layGiaTopping(string maSP, string maSize, string maGH)
+        {
+            List<ToppingDonHang> lstTp = data.ToppingDonHangs.Where(x => x.MaSanPham == maSP && x.MaSize == maSize && x.MaGioHang == maGH).ToList();
+            if (lstTp.Count > 0)
+            {
+                return lstTp.Sum(x => x.Topping.Gia);
+            }
+            return 0;
+        }
+
         [HttpPost]
-        public ActionResult UpdateCart(string maSP, string maSize, string maGH, int soLuong, decimal giaTopping)
+        public ActionResult UpdateCart(string maSP, string maSize, string maGH, int soLuong)
         {
             GioHang gh = Session["gh"] as GioHang;
             if (gh == null)
@@ -268,18 +655,55 @@ namespace DoAn_LapTrinhWeb.Controllers
             {
                 if (soLuong > 0)
                 {
+                    // update lại ToppingDonHang
+                    // xóa các ToppingDonHang cũ
+                    List<ToppingDonHang> lstTp = data.ToppingDonHangs.Where(x => x.MaSanPham == maSP && x.MaSize == maSize && x.MaGioHang == maGH).ToList();
+                    if (lstTp.Count > 0)
+                    {
+                        List<ToppingDonHang> lstKoTrung = layDanhSachToppingKoTrung(lstTp);
+                        List<ToppingDonHang> lstTpToAdd = lstKoTrung.Select(x => new ToppingDonHang
+                        {
+                            MaGioHang = x.MaGioHang,
+                            MaSanPham = x.MaSanPham,
+                            MaSize = x.MaSize,
+                            MaTopping = x.MaTopping
+                        }).ToList();
+
+                        data.ToppingDonHangs.DeleteAllOnSubmit(lstTp);
+
+                        // thêm soLuong dòng mới ToppingDonHang
+                        for (int i = 0; i < soLuong; i++)
+                        {
+                            foreach (var tp in lstTpToAdd)
+                            {
+                                ToppingDonHang newTp = new ToppingDonHang
+                                {
+                                    MaGioHang = tp.MaGioHang,
+                                    MaSanPham = tp.MaSanPham,
+                                    MaSize = tp.MaSize,
+                                    MaTopping = tp.MaTopping
+                                };
+                                data.ToppingDonHangs.InsertOnSubmit(newTp);
+                            }
+                        }
+                        data.SubmitChanges();
+                    }
+
+                    decimal giaTopping = layGiaTopping(maSP, maSize, maGH);
                     ctgh.SoLuong = soLuong;
-                    ctgh.ThanhTien = (ctgh.SanPham.Gia+giaTopping)*soLuong;
+                    ctgh.ThanhTien = (ctgh.SanPham.Gia * soLuong) + giaTopping;
+
+                    //data.SubmitChanges();
                 }
                 else
                 {
                     data.ChiTietGioHangs.DeleteOnSubmit(ctgh);
                     data.SubmitChanges();
-                    GioHang ghToDel = data.GioHangs.FirstOrDefault(x=>x.MaGioHang==maGH);
-                    if(ghToDel.ChiTietGioHangs.ToList().Count>0)
+                    GioHang ghToDel = data.GioHangs.FirstOrDefault(x => x.MaGioHang == maGH);
+                    if (ghToDel.ChiTietGioHangs.ToList().Count == 0)
                     {
                         data.GioHangs.DeleteOnSubmit(ghToDel);
-                    }    
+                    }
                 }
                 data.SubmitChanges();
             }
@@ -288,19 +712,35 @@ namespace DoAn_LapTrinhWeb.Controllers
 
             Session["gh"] = gh;
 
+            // Cập nhật tổng tiền
+            if (gh != null)
+                capNhatTongTienGioHang(gh.MaGioHang);
+
             return RedirectToAction("ViewCart");
         }
 
         public ActionResult ViewCart()
         {
             GioHang cart = Session["gh"] as GioHang;
-            if (cart == null)
+
+            if(cart == null)
+            {
+                return RedirectToAction("Products");
+            }    
+
+            if (cart.ChiTietGioHangs == null || cart.ChiTietGioHangs.Count == 0)
             {
                 return RedirectToAction("Products");
             }
             List<ChiTietGioHang> cartItems = data.ChiTietGioHangs.Where(t => t.MaGioHang == cart.MaGioHang).ToList();
             ViewBag.lstTopping = data.ToppingDonHangs.ToList();
+            // tổng đơn hàng ko tính giảm giá, phí vận chuyển
+            ViewBag.tongDonHang = data.ChiTietGioHangs.Where(x => x.MaGioHang == cart.MaGioHang).Sum(x => x.ThanhTien);
 
+            if (data.ToppingDonHangs.Where(x => x.MaGioHang == cart.MaGioHang).ToList().Count > 0)
+            {
+                ViewBag.tongDonHang += data.ToppingDonHangs.Where(x => x.MaGioHang == cart.MaGioHang).Sum(x => x.Topping.Gia);
+            }
             return View(cartItems);
         }
 
@@ -332,31 +772,9 @@ namespace DoAn_LapTrinhWeb.Controllers
                             })
                             .ToList();
             ViewBag.lst_size = lst_size;
+            List<SanPham> spcl = data.SanPhams.Where(t => t.MaLoaiSP == sanPham.MaLoaiSP && t.MaSanPham != sanPham.MaSanPham).GroupBy(x => x.MaSanPham).Select(x => x.FirstOrDefault()).Take(4).ToList();
+            ViewBag.SanPhamCungLoai = spcl;
             return View(sanPham);
-        }
-        // action lấy loại topping
-        public ActionResult GetTopping()
-        {
-            List<Topping> lst_topping = data.Toppings.ToList();
-            return PartialView(lst_topping);
-        }
-
-        public ActionResult GetSize(string idSanPham)
-        {
-            List<ThongTinSize> lst_size = data.SanPhams
-                            .Where(t => t.MaSanPham == idSanPham)
-                            .Select(x => new ThongTinSize
-                            {
-                                MaSize = x.MaSize,
-                                TenSize = x.Size.TenSize,
-                                GiaThem = layGiaThem(x.MaSanPham, x.MaSize)
-                            })
-                            .ToList();
-            return PartialView(lst_size);
-        }
-        public ActionResult CheckOut()
-        {
-            return View();
         }
 
         public ActionResult HistoryOrders(int? id, int? page)

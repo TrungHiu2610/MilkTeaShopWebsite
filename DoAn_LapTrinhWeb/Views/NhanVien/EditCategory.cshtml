@@ -1,0 +1,45 @@
+﻿
+@using DoAn_LapTrinhWeb.Models;
+@model List<LoaiSanPham>
+
+@{
+    ViewBag.Title = "EditCategory";
+    Layout = "~/Views/Shared/_LayoutPageNhanVien.cshtml";
+}
+
+
+<div class="container">
+    <h3>Sửa sản phẩm</h3>
+    <form method="post" action="/NhanVien/EditCategory">
+        @foreach (var lsp in Model)
+        {
+            <div class="mb-5 border-bottom pb-4">
+                <h4 class="mb-3">@lsp.TenLoaiSP</h4>
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Thông tin loại sản phẩm</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Tên sản phẩm -->
+                                <tr>
+                                    <td>Tên sản phẩm:</td>
+                                    <td>
+                                        <input type="text" name="updatedCategories[@lsp.MaLoaiSP].TenLoaiSP" value="@lsp.TenLoaiSP" class="form-control" />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <button type="submit" class="btn btn-success mr-3">Lưu thay đổi</button>
+        <a href="/NhanVien/Categories" class="btn btn-primary text-white" style="width:100px">Quay về trang chủ</a>
+    </form>
+
+</div>

@@ -146,7 +146,7 @@
                 <div class="pagination-container">
                     @Html.PagedListPager(
                         Model,
-                        page => Url.Action("Products", new { page }),
+                        page => Url.Action("Orders", new { page }),
                         new PagedListRenderOptions
                         {
                             DisplayLinkToFirstPage = PagedListDisplayMode.Always,

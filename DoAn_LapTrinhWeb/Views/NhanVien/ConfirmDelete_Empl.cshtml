@@ -1,0 +1,32 @@
+﻿@using DoAn_LapTrinhWeb.Models;
+@model List<NguoiDung>
+
+@{
+    ViewBag.Title = "DeleteEmployee";
+    Layout = "~/Views/Shared/_LayoutPageNhanVien.cshtml";
+}
+
+<div class="container">
+    <div class="row d-block">
+        <h3>Xác nhận xóa nhân viên</h3>
+        <form method="post" action="/NhanVien/ConfirmDelete_Empl">
+            <p>Bạn có chắc chắn muốn xóa những nhân viên này?</p>
+
+            <ol class="list-group" type="1">
+                @foreach (var nv in Model)
+                {
+                    <li class="list-group-item"><p style="font-size:large;font-weight:bold">@nv.HoTen</p></li>
+                }
+            </ol>
+
+            @foreach (var nv in Model)
+            {
+                <input type="hidden" name="selectedEmployees" value="@nv.MaNguoiDung" />
+            }
+
+            <button type="submit" class="btn btn-danger mt-3 mr-3">Xóa</button>
+            <a href="/NhanVien/Employees" class="btn btn-secondary mt-3">Hủy bỏ</a>
+        </form>
+
+    </div>
+</div>

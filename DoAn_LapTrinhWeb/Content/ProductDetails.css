@@ -55,31 +55,36 @@
             color: #666666;
             font-weight: 400;
         }
+
     .product-detail-info .price {
         font-family: 'fz poppins-medium';
-        font-size:24px;
+        font-size: 24px;
         font-weight: 600;
         color: #9B5A32;
-        margin-bottom:20px;
+        margin-bottom: 20px;
     }
-.product-detail-info .divider {
-    border-top: 1px solid #E6E6E6;
-    margin-bottom: 20px;
-}
-.product-detail-info .size-picking {
-    width:100%;
-    height:inherit;
-    /*border: 1px solid red;*/
-    margin-bottom: 20px;
-}
-.product-detail-info .size-picking p{
-    font-family: 'fz poppins-medium';
-    font-size: 14px;
-    color: #1A1A1A;
-    margin-top: 0px;
-    margin-bottom: 0px;
-}
-.btn_size {
+
+    .product-detail-info .divider {
+        border-top: 1px solid #E6E6E6;
+        margin-bottom: 20px;
+    }
+
+    .product-detail-info .size-picking {
+        width: 100%;
+        height: inherit;
+        /*border: 1px solid red;*/
+        margin-bottom: 20px;
+    }
+
+        .product-detail-info .size-picking p {
+            font-family: 'fz poppins-medium';
+            font-size: 14px;
+            color: #1A1A1A;
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+
+/*.btn_size {
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -87,7 +92,7 @@
     border-radius: 6px;
     border: 1px solid #989898;
     margin-right: 16px;
-    width: auto; 
+    width: auto;
     height: auto;
     font-family: 'fz poppins-medium';
     font-size: 16px;
@@ -95,14 +100,86 @@
     color: #989898;
     margin-top: 12px;
 }
+
+.btn_size_radio {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10.5px 16px;
+    border-radius: 6px;
+    border: 1px solid #989898;
+    margin-right: 16px;
+    width: auto;
+    height: auto;
+    font-family: 'fz poppins-medium';
+    font-size: 16px;
+    font-weight: 500;
+    color: #989898;
+    margin-top: 12px;
+}
+
+.btn_size.selected {
+    background-color: #C58A66;*/ /* Xanh lá cây khi chọn */
+    /*color: white;
+    border-color: #C58A66;
+}
+
+.btn_size_radio.selected {
+    background-color: #C58A66;*/ /* Xanh lá cây khi chọn */
+    /*color: white;
+    border-color: #C58A66;
+}*/
+
+.btn_size,
+.btn_size_radio {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 6px;
+    border: 1px solid #989898;
+    margin-right: 16px;
+    margin-top: 12px;
+    font-family: 'fz poppins-medium';
+    font-size: 16px;
+    font-weight: 500;
+    color: #989898;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+    .btn_size input,
+    .btn_size_radio input {
+        display: none; /* ẩn input */
+    }
+
+        /* Khi được chọn */
+        .btn_size input:checked + span,
+        .btn_size_radio input:checked + span {
+            background-color: #C58A66;
+            color: white;
+            border-color: #C58A66;
+        }
+
+    /* Cho span hiển thị đẹp */
+    .btn_size span,
+    .btn_size_radio span {
+        display: inline-block;
+        padding: 10.5px 16px;
+        border-radius: 6px;
+        border: 1px solid transparent;
+    }
+
+
 .add-to-cart {
     display: flex;
-    justify-content:center;
+    justify-content: center;
     align-items: center;
     padding: 18px 32px;
     border-bottom: 1px solid #E5E5E5;
     border-top: 1px solid #E5E5E5;
 }
+
 .cart-quantity {
     display: flex;
     justify-content: space-between;
@@ -115,15 +192,17 @@
     padding: 8px;
     box-sizing: border-box;
 }
-.cart-quantity input {
-    width: 24px;
-    height: 24px;
-    text-align: center;
-    border:none;
-    font-family:'fz poppins-medium';
-    font-size: 16px;
-    font-weight: 400;
-}
+
+    .cart-quantity input {
+        width: 24px;
+        height: 24px;
+        text-align: center;
+        border: none;
+        font-family: 'fz poppins-medium';
+        font-size: 16px;
+        font-weight: 400;
+    }
+
 .add-to-cart_button {
     display: flex;
     justify-content: center;
@@ -137,13 +216,79 @@
     font-size: 16px;
     font-weight: 500;
     color: white;
+    cursor: pointer;
 }
-.add-to-cart_button img {
-    margin-left: 16px;
-}
+
+    .add-to-cart_button img {
+        margin-left: 16px;
+    }
+
 .product-detail-type {
     margin-top: 24px;
     color: #808080;
     font-weight: 400;
 }
 
+.description-title-bar {
+    width: 100%;
+    height: 56px;
+    margin-top: 45px;
+    border-bottom: 1px solid #E5E5E5;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.description-title {
+    width: auto;
+    height: inherit;
+    margin-left: 15%;
+    border-bottom: 2px solid #C58A66;
+    color: #1A1A1A;
+    font-family: 'fz poppins-medium';
+    font-size: 16px;
+    padding: 16px;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.description-content {
+    width: 100%;
+    height: 96px;
+    margin-top: 24px;
+    margin-left: 15%;
+    margin-right: 15%;
+    display: flex;
+    justify-content: flex-start;
+    color: #808080;
+    font-family: 'Fz Poppins';
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.relate-products-title {
+    width: 100%;
+    height: 96px;
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+    .relate-products-title p {
+        margin-left: 15%;
+        font-family: 'fz poppins-medium';
+        font-size: 32px;
+        font-weight: 400;
+    }
+
+.deltail-product-container {
+    display: flex;
+    justify-content: flex-start; /* Căn đều các phần tử trong container */
+    padding: 0 15%; /* Căn lề trái và phải 15% */
+}
+
+.details-row {
+    display: flex;
+    flex-wrap: wrap; /* Để các sản phẩm tự động xuống dòng khi không đủ không gian */
+    justify-content: flex-start;
+    gap: 24px; /* Khoảng cách 24px giữa các sản phẩm */
+}
