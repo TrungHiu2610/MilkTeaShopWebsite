@@ -68,10 +68,11 @@ namespace DoAn_LapTrinhWeb.Models
     partial void DeleteTopping(Topping instance);
         #endregion
         public DB_QL_CuaHangTraSuaDataContext() :
-               base(global::System.Configuration.ConfigurationManager.ConnectionStrings["db_qlcuahang_ltwConnectionString"].ConnectionString, mappingSource)
+               base(global::System.Configuration.ConfigurationManager.ConnectionStrings["db_qlcuahang_ltwConnectionString2"].ConnectionString, mappingSource)
         {
             OnCreated();
         }
+
         public DB_QL_CuaHangTraSuaDataContext(string connection) : 
 				base(connection, mappingSource)
 		{
@@ -1613,7 +1614,7 @@ namespace DoAn_LapTrinhWeb.Models
 		
 		private string _MaHoaDon;
 		
-		private System.Nullable<int> _MaKH;
+		private int _MaKH;
 		
 		private System.Nullable<int> _MaNV;
 		
@@ -1647,7 +1648,7 @@ namespace DoAn_LapTrinhWeb.Models
     partial void OnCreated();
     partial void OnMaHoaDonChanging(string value);
     partial void OnMaHoaDonChanged();
-    partial void OnMaKHChanging(System.Nullable<int> value);
+    partial void OnMaKHChanging(int value);
     partial void OnMaKHChanged();
     partial void OnMaNVChanging(System.Nullable<int> value);
     partial void OnMaNVChanged();
@@ -1698,8 +1699,8 @@ namespace DoAn_LapTrinhWeb.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MaKH", DbType="Int")]
-		public System.Nullable<int> MaKH
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MaKH", DbType="Int NOT NULL")]
+		public int MaKH
 		{
 			get
 			{
@@ -1850,7 +1851,7 @@ namespace DoAn_LapTrinhWeb.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DiaChiGiaoHang", DbType="NVarChar(100)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DiaChiGiaoHang", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
 		public string DiaChiGiaoHang
 		{
 			get
@@ -1870,7 +1871,7 @@ namespace DoAn_LapTrinhWeb.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HoTenKH", DbType="NVarChar(100)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HoTenKH", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
 		public string HoTenKH
 		{
 			get
@@ -1890,7 +1891,7 @@ namespace DoAn_LapTrinhWeb.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SdtGiaoHang", DbType="NVarChar(100)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SdtGiaoHang", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
 		public string SdtGiaoHang
 		{
 			get
@@ -1984,7 +1985,7 @@ namespace DoAn_LapTrinhWeb.Models
 					}
 					else
 					{
-						this._MaKH = default(Nullable<int>);
+						this._MaKH = default(int);
 					}
 					this.SendPropertyChanged("NguoiDung");
 				}

@@ -699,12 +699,15 @@ namespace DoAn_LapTrinhWeb.Controllers
                     hd.TrangThai = "Đã từ chối";
                     TempData["Message"] = "Đã từ chối đơn hàng";
                 }
+                else if(action=="confirm_ready")
+                {
+                    hd.TrangThai = "Đang giao";
+                    TempData["Message"] = "Đang giao cho khách";
+                }    
                 data.SubmitChanges();
             }
             return RedirectToAction("OrderDetail", "NhanVien", new { maHD = maHD });
         }
-
-
 
         // ================================= QUẢN LÝ NHÂN VIÊN ==========================================
         public ActionResult Employees(int? page)
