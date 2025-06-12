@@ -64,16 +64,16 @@
   <Table Name="dbo.HoaDonBanHang" Member="HoaDonBanHangs">
     <Type Name="HoaDonBanHang">
       <Column Name="MaHoaDon" Type="System.String" DbType="Char(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="MaKH" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MaKH" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="MaNV" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="NgayLap" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
       <Column Name="TongTien" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
       <Column Name="MaGG" Type="System.String" DbType="Char(10)" CanBeNull="true" />
       <Column Name="TrangThai" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="PhuongThucThanhToan" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="DiaChiGiaoHang" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-      <Column Name="HoTenKH" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-      <Column Name="SdtGiaoHang" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="DiaChiGiaoHang" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="HoTenKH" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="SdtGiaoHang" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
       <Association Name="HoaDonBanHang_ChiTietHoaDonBanHang" Member="ChiTietHoaDonBanHangs" ThisKey="MaHoaDon" OtherKey="MaHoaDon" Type="ChiTietHoaDonBanHang" />
       <Association Name="GiamGia_HoaDonBanHang" Member="GiamGia" ThisKey="MaGG" OtherKey="MaGG" Type="GiamGia" IsForeignKey="true" DeleteRule="SET NULL" />
       <Association Name="NguoiDung_HoaDonBanHang" Member="NguoiDung" ThisKey="MaKH" OtherKey="MaNguoiDung" Type="NguoiDung" IsForeignKey="true" />

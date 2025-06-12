@@ -1,5 +1,6 @@
 ﻿@using DoAn_LapTrinhWeb.Models;
-@model List<SanPham>
+@using PagedList.Mvc
+@model PagedList.IPagedList<SanPham>
 
 @{
     ViewBag.Title = "Products";
@@ -16,6 +17,19 @@
         <span style="color: #C58A66">Danh mục sản phẩm</span>
     </div>
 </div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+else if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-error">
+        @TempData["ErrorMessage"]
+    </div>
+}
 
 <div class="product_container">
     <div class="menu">
@@ -49,10 +63,6 @@
             @foreach (SanPham sp in Model)
             {
                 <div class="product-item">
-                    @*<div class="corner-icons">
-                        <a href="#"><img src="~/Content/Image/AddToWishList.svg" alt="Add to Wish List" /></a>
-                        <a href="#"><img src="~/Content/Image/QuickView.svg" alt="Quick View" /></a>
-                    </div>*@
                     <div class="card">
                         <a href="/Home/ProductDetails/@sp.MaSanPham">
                             <img src="~/Content/HinhAnh/@sp.HinhAnh" alt="Alternate Text" class="card-img-top" />
@@ -72,8 +82,27 @@
                         </div>
                     </div>
                 </div>
-
             }
+
         </div>
+
+        @Html.PagedListPager(
+            Model,
+            page => Url.Action("Products", new { page }),
+            new PagedListRenderOptions
+            {
+                DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                DisplayPageCountAndCurrentLocation = false,
+                MaximumPageNumbersToDisplay = 5,
+                DisplayEllipsesWhenNotShowingAllPageNumbers = true,
+                UlElementClasses = new[] { "pagination", "justify-content-center" },
+                LiElementClasses = new[] { "page-item" }
+            }
+        )
+
     </div>
+
 </div>

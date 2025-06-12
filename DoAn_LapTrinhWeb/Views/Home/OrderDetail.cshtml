@@ -51,230 +51,237 @@
 }
 
 <div class="container">
-        <div class="row mb-3">
-            <div class="col-6 d-flex mt-3 mb-3" style="align-items:center">
-                <h4>Chi Tiết Đơn Hàng</h4>
-                <p>• @Model.NgayLap.Day Tháng @Model.NgayLap.Month, @Model.NgayLap.Year </p>
-                @if (lstCTHD != null)
-                {
-                    <p>
-                        • @lstCTHD.Sum(x => x.SoLuong) Sản phẩm
-                    </p>
-                }
-                else
-                {
-                    <p>
-                        • 0 Sản phẩm
-                    </p>
-                }
+    <div class="row mb-3">
+        <div class="col-6 d-flex mt-3 mb-3" style="align-items:center">
+            <h4>Chi Tiết Đơn Hàng</h4>
+            <p>• @Model.NgayLap.Day Tháng @Model.NgayLap.Month, @Model.NgayLap.Year </p>
+            @if (lstCTHD != null)
+            {
+                <p>
+                    • @lstCTHD.Sum(x => x.SoLuong) Sản phẩm
+                </p>
+            }
+            else
+            {
+                <p>
+                    • 0 Sản phẩm
+                </p>
+            }
+        </div>
+        <div class="col-6 text-right">
+            <a href="/Home/HistoryOrders/@Model.MaKH" style="color: #994B22">Quay về</a>
+        </div>
+    </div>
+
+    <div class="row" style="display: flex;  justify-content: center">
+        <div class="col-8 mt-3 mb-3">
+            <div class="row">
+                <div class="card col-6">
+                    <div class="card-title text-left mt-2 mb-2" style="color:lightgray">ĐỊA CHỈ TÀI KHOẢN</div>
+                    <div class="card-body text-left">
+                        <p><strong>@Model.NguoiDung.HoTen</strong></p>
+                        <p>@Model.NguoiDung.DiaChi</p> <br />
+                        <label>SỐ ĐIỆN THOẠI</label> <br />
+                        <p>@Model.NguoiDung.SoDienThoai</p>
+                    </div>
+                </div>
+
+                <div class="card col-6">
+                    <div class="card-title text-left mt-2 mb-2" style="color:lightgray">ĐỊA CHỈ GIAO HÀNG</div>
+                    <div class="card-body text-left">
+                        <p><strong>@Model.HoTenKH</strong></p>
+                        <p>@Model.DiaChiGiaoHang</p> <br />
+                        <label>SỐ ĐIỆN THOẠI</label> <br />
+                        <p>@Model.SdtGiaoHang</p>
+                    </div>
+                </div>
             </div>
-            <div class="col-6 text-right">
-                <a href="/Home/HistoryOrders/@Model.MaKH" style="color: #994B22">Quay về</a>
+        </div>
+        <div class="col-4 mt-3 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <p><strong>Mã Đơn:</strong> #@Model.MaHoaDon</p>
+                        </div>
+                        <div class="col-6">
+                            <p><strong>Thanh Toán:</strong> @Model.PhuongThucThanhToan</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Tổng đơn hàng
+                                    </td>
+                                    <td>
+                                        @ViewBag.tongDonHang.ToString("N0") VNĐ
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Giảm giá
+                                    </td>
+                                    <td>
+                                        @if (Model.GiamGia != null)
+                                        {
+                                            <p>@Model.GiamGia.PhanTramGiam%</p>
+                                            <p>-@((Model.GiamGia.PhanTramGiam/100* ViewBag.tongDonHang).ToString("N0")) VNĐ</p>
+                                        }
+                                        else
+                                        {
+                                            <p>0%</p>
+                                            <p>-0 VNĐ</p>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Phí giao hàng
+                                    </td>
+                                    <td>
+                                        0 VNĐ
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Tổng tiền
+                                    </td>
+                                    <td>
+                                        <p style="color:#881B1F;font-weight:bold; font-size:large">@Model.TongTien.ToString("N0") VNĐ</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="row" style="display: flex;  justify-content: center">
-            <div class="col-8 mt-3 mb-3">
-                <div class="row">
-                    <div class="card col-6">
-                        <div class="card-title text-left mt-2 mb-2" style="color:lightgray">ĐỊA CHỈ TÀI KHOẢN</div>
-                        <div class="card-body text-left">
-                            <p><strong>@Model.NguoiDung.HoTen</strong></p>
-                            <p>@Model.NguoiDung.DiaChi</p> <br />
-                            <label>SỐ ĐIỆN THOẠI</label> <br />
-                            <p>@Model.NguoiDung.SoDienThoai</p>
-                        </div>
-                    </div>
-
-                    <div class="card col-6">
-                        <div class="card-title text-left mt-2 mb-2" style="color:lightgray">ĐỊA CHỈ GIAO HÀNG</div>
-                        <div class="card-body text-left">
-                            <p><strong>@Model.NguoiDung.HoTen</strong></p>
-                            <p>@Model.NguoiDung.DiaChi</p> <br />
-                            <label>SỐ ĐIỆN THOẠI</label> <br />
-                            <p>@Model.NguoiDung.SoDienThoai</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-4 mt-3 mb-3">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-6">
-                                <p><strong>Mã Đơn:</strong> #@Model.MaHoaDon</p>
-                            </div>
-                            <div class="col-6">
-                                <p><strong>Thanh Toán:</strong> @Model.PhuongThucThanhToan</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <table class="table">
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            Tổng đơn hàng
-                                        </td>
-                                        <td>
-                                            @ViewBag.tongDonHang.ToString("N0") VNĐ
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Giảm giá
-                                        </td>
-                                        <td>
-                                            @if (Model.GiamGia != null)
-                                            {
-                                                <p>@Model.GiamGia.PhanTramGiam%</p>
-                                                <p>-@((Model.GiamGia.PhanTramGiam/100* ViewBag.tongDonHang).ToString("N0")) VNĐ</p>
-                                            }
-                                            else
-                                            {
-                                                <p>0%</p>
-                                                <p>-0 VNĐ</p>
-                                            }
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Phí giao hàng
-                                        </td>
-                                        <td>
-                                            0 VNĐ
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Tổng tiền
-                                        </td>
-                                        <td>
-                                            <p style="color:#881B1F;font-weight:bold; font-size:large">@Model.TongTien.ToString("N0") VNĐ</p>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mt-3 mb-3" >
-                <div class="progress-container">
-                    <!-- Thanh ngang: nền và thanh đã hoàn thành -->
-                    <div class="progress-line">
-                        <div class="progress-line-completed"
-                             style="width: @(Model.TrangThai == "Chờ xác nhận" ? "0%" :
+        <div class="row mt-3 mb-3">
+            <div class="progress-container">
+                <!-- Thanh ngang: nền và thanh đã hoàn thành -->
+                <div class="progress-line">
+                    <div class="progress-line-completed"
+                         style="width: @(Model.TrangThai == "Chờ xác nhận" ? "0%" :
                         Model.TrangThai == "Đã xác nhận" ? "25%" :
                         Model.TrangThai == "Đang xử lý" ? "50%" :
                         Model.TrangThai == "Đang giao" ? "75%" :
                         Model.TrangThai == "Đã hoàn thành" ? "100%" : "0%")">
-                        </div>
                     </div>
-
-                    <!-- Các trạng thái -->
-                    <div class="progress-step">
-                        <div class="progress-point @(Model.TrangThai == "Chờ xác nhận" ? "disabled" : "completed")">✔</div>
-                        <div class="progress-label @(Model.TrangThai == "Chờ xác nhận" ? "disabled" : "active")">Chờ xác nhận</div>
-                    </div>
-
-                    <div class="progress-step">
-                        <div class="progress-point @(Model.TrangThai == "Đã xác nhận" || Model.TrangThai == "Đang xử lý" || Model.TrangThai == "Đang giao" || Model.TrangThai == "Đã hoàn thành" ? "completed" : "disabled")">02</div>
-                        <div class="progress-label @(Model.TrangThai == "Đã xác nhận" ? "active" : "disabled")">Đã xác nhận</div>
-                    </div>
-
-                    <div class="progress-step">
-                        <div class="progress-point @(Model.TrangThai == "Đang xử lý" || Model.TrangThai == "Đang giao" || Model.TrangThai == "Đã hoàn thành" ? "completed" : "disabled")">03</div>
-                        <div class="progress-label @(Model.TrangThai == "Đang xử lý" ? "active" : "disabled")">Đang xử lý</div>
-                    </div>
-
-                    <div class="progress-step">
-                        <div class="progress-point @(Model.TrangThai == "Đã hoàn thành" ? "completed" : "disabled")">04</div>
-                        <div class="progress-label @(Model.TrangThai == "Đã hoàn thành" ? "active" : "disabled")">Đã hoàn thành</div>
-                    </div>
-
-                    @if (Model.TrangThai == "Đã từ chối")
-                    {
-                        <div class="progress-step">
-                            <div class="progress-point rejected">❌</div>
-                            <div class="progress-label rejected">Đã từ chối</div>
-                        </div>
-                    }
                 </div>
-            </div>
 
-            <table class="table">
-                <thead style="background-color:lightgray">
-                    <tr>
-                        <th>Mã</th>
-                        <th>Sản Phẩm</th>
-                        <th>Size</th>
-                        <th>Topping</th>
-                        <th>Giá sản phẩm</th>
-                        <th>Số Lượng</th>
-                        <th>Giá topping</th>
-                        <th>Tổng tiền</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (ChiTietHoaDonBanHang cthd in lstCTHD)
-                    {
-                        giaTopping = 0;
-                        <tr>
-                            <td>
-                                @cthd.MaSanPham
-                            </td>
-                            <td>
-                                <div class="d-inline">
-                                    <img src="~/Content/HinhAnh/@cthd.SanPham.HinhAnh" style="width:70px;height:70px" />
-                                    <p>@cthd.SanPham.TenSanPham</p>
-                                </div>
-                            </td>
-                            <td>
-                                @cthd.SanPham.Size.TenSize
-                            </td>
-                            <td>
-                                <ul style=" list-style: none; text-align: left; margin-left: -42px;">
-                                    @{
-                                        var groupedToppings = lstTp
-                                            .Where(tp => tp.MaHoaDon == cthd.MaHoaDon
-                                                      && tp.MaSanPham == cthd.MaSanPham
-                                                      && tp.MaSize == cthd.MaSize)
-                                            .GroupBy(tp => tp.Topping.TenTopping) // Nhóm theo tên topping
-                                            .Select(group => new
-                                            {
-                                                TenTopping = group.Key,
-                                                SoLuong = group.Count(), // Đếm số lượng dòng trùng nhau
-                                                GiaTopping = group.Sum(tp => tp.Topping.Gia) // Tổng giá
-                                            })
-                                            .ToList();
-                                    }
-                                    @foreach (var topping in groupedToppings)
-                                    {
-                                        <li>
-                                            @topping.TenTopping (@topping.SoLuong) - @topping.GiaTopping VND
-                                        </li>
-                                        giaTopping += topping.GiaTopping;
-                                    }
-                                </ul>
-                            </td>
-                            <td>
-                                @cthd.Gia.ToString("N0")
-                            </td>
-                            <td>
-                                @cthd.SoLuong
-                            </td>
-                            <td>
-                                @giaTopping.ToString("N0")
-                            </td>
-                            <td>
-                                @((cthd.Gia * cthd.SoLuong + giaTopping).ToString("N0")) VNĐ
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                <!-- Các trạng thái -->
+                <div class="progress-step">
+                    <div class="progress-point @(Model.TrangThai == "Chờ xác nhận" ? "disabled" : "completed")">✔</div>
+                    <div class="progress-label @(Model.TrangThai == "Chờ xác nhận" ? "disabled" : "active")">Chờ xác nhận</div>
+                </div>
+
+                <div class="progress-step">
+                    <div class="progress-point @(Model.TrangThai == "Đã xác nhận" || Model.TrangThai == "Đang xử lý" || Model.TrangThai == "Đang giao" || Model.TrangThai == "Đã hoàn thành" ? "completed" : "disabled")">02</div>
+                    <div class="progress-label @(Model.TrangThai == "Đã xác nhận" ? "active" : "disabled")">Đã xác nhận</div>
+                </div>
+
+                <div class="progress-step">
+                    <div class="progress-point @(Model.TrangThai == "Đang xử lý" || Model.TrangThai == "Đang giao" || Model.TrangThai == "Đã hoàn thành" ? "completed" : "disabled")">03</div>
+                    <div class="progress-label @(Model.TrangThai == "Đang xử lý" ? "active" : "disabled")">Đang xử lý</div>
+                </div>
+
+                <div class="progress-step">
+                    <div class="progress-point @(Model.TrangThai == "Đã hoàn thành" ? "completed" : "disabled")">04</div>
+                    <div class="progress-label @(Model.TrangThai == "Đã hoàn thành" ? "active" : "disabled")">Đã hoàn thành</div>
+                </div>
+
+                @if (Model.TrangThai == "Đã từ chối")
+                {
+                    <div class="progress-step">
+                        <div class="progress-point rejected">❌</div>
+                        <div class="progress-label rejected">Đã từ chối</div>
+                    </div>
+                }
+            </div>
         </div>
+
+        <table class="table">
+            <thead style="background-color:lightgray">
+                <tr>
+                    <th>Mã</th>
+                    <th>Sản Phẩm</th>
+                    <th>Size</th>
+                    <th>Topping</th>
+                    <th>Giá sản phẩm</th>
+                    <th>Số Lượng</th>
+                    <th>Giá topping</th>
+                    <th>Tổng tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ChiTietHoaDonBanHang cthd in lstCTHD)
+                {
+                    giaTopping = 0;
+                    <tr>
+                        <td>
+                            @cthd.MaSanPham
+                        </td>
+                        <td>
+                            <div class="d-inline">
+                                <img src="~/Content/HinhAnh/@cthd.SanPham.HinhAnh" style="width:70px;height:70px" />
+                                <p>@cthd.SanPham.TenSanPham</p>
+                            </div>
+                        </td>
+                        <td>
+                            @cthd.SanPham.Size.TenSize
+                        </td>
+                        <td>
+                            <ul style=" list-style: none; text-align: left; margin-left: -42px;">
+                                @{
+                                    var groupedToppings = lstTp
+                                        .Where(tp => tp.MaHoaDon == cthd.MaHoaDon
+                                                  && tp.MaSanPham == cthd.MaSanPham
+                                                  && tp.MaSize == cthd.MaSize)
+                                        .GroupBy(tp => tp.Topping.TenTopping) // Nhóm theo tên topping
+                                        .Select(group => new
+                                        {
+                                            TenTopping = group.Key,
+                                            SoLuong = group.Count(), // Đếm số lượng dòng trùng nhau
+                                            GiaTopping = group.Sum(tp => tp.Topping.Gia) // Tổng giá
+                                        })
+                                        .ToList();
+                                }
+                                @foreach (var topping in groupedToppings)
+                                {
+                                    <li>
+                                        @topping.TenTopping (@topping.SoLuong) - @topping.GiaTopping VND
+                                    </li>
+                                    giaTopping += topping.GiaTopping;
+                                }
+                            </ul>
+                        </td>
+                        <td>
+                            @cthd.Gia.ToString("N0")
+                        </td>
+                        <td>
+                            @cthd.SoLuong
+                        </td>
+                        <td>
+                            @giaTopping.ToString("N0")
+                        </td>
+                        <td>
+                            @((cthd.Gia * cthd.SoLuong + giaTopping).ToString("N0")) VNĐ
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (Model.TrangThai == "Đang giao")
+    {
+        <div class="row mt-3 text-left">
+            <input type="hidden" value="@Model.MaHoaDon" name="maHD" />
+            <button type="submit" name="action" value="confirm_ready" class="btn btn-success mr-3">Đã hoàn thành món</button>
+        </div>
+    }
 </div>
 
 

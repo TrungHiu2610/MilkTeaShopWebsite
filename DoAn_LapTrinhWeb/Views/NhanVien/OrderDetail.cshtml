@@ -266,6 +266,14 @@
                 <button type="submit" name="action" value="reject" class="btn btn-danger mr-3">Từ chối</button>
             </div>
         }
+        @if (Model.TrangThai == "Đang xử lý")
+        {
+            <div class="row mt-3 text-left">
+                <input type="hidden" value="@Model.MaHoaDon" name="maHD" />
+                <input type="hidden" value="@user.MaNguoiDung" name="maNV" />
+                <button type="submit" name="action" value="confirm_ready" class="btn btn-success mr-3">Đã hoàn thành món</button>
+            </div>
+        }
     </form>
 </div>
 
